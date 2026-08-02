@@ -239,6 +239,14 @@ footer a{color:var(--mustard)}
 .intro p{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.7}
 .intro .free{display:inline-block;margin-top:10px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
   background:var(--mustard);color:#3A2C0B;padding:5px 12px;border-radius:999px;font-weight:600}
+.intro .credit{font-size:10.5px;color:var(--sub);margin-top:12px}
+.linkrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.linkrow a{font-size:11.5px;padding:7px 13px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;letter-spacing:.02em;transition:all .2s ease}
+.linkrow a:active{background:var(--coral);border-color:var(--coral);color:#2A1610}
+.trophies{margin-top:18px}
+.trophies .t-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:8px}
+.trophy-list{display:flex;flex-wrap:wrap;gap:6px}
+.trophy-list span{font-size:11px;padding:5px 11px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--body)}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
@@ -313,8 +321,9 @@ const VENUES = {
   mainday:  {name:"Main Stage",              c:"#E1573C", day:"day",   latD:0.0000,  lngD:0.0000,  mx:96,  my:150, lb:"MAIN STAGE"},
   kids:     {name:"Kids Shows",              c:"#EAC768", day:"day",   latD:0.0006,  lngD:0.0016,  mx:266, my:150, lb:"KIDS SHOWS"},
   carshow:  {name:"Rides N' Rods Show",      c:"#8C4A3A", day:"day",   latD:0.0003,  lngD:0.0008,  mx:180, my:170, lb:"CAR SHOW"},
-  vendors:  {name:"Vendor Market",           c:"#4E8C7E", day:"day",   latD:0.0002,  lngD:0.0000,  mx:96,  my:216, lb:"VENDOR MARKET"},
+  vendors:  {name:"Artisan Market",          c:"#4E8C7E", day:"day",   latD:0.0002,  lngD:0.0000,  mx:96,  my:216, lb:"ARTISAN MARKET"},
   foodd:    {name:"Food Trucks",             c:"#D97A3D", day:"day",   latD:0.0005,  lngD:0.0015,  mx:266, my:216, lb:"FOOD TRUCKS"},
+  gokart:   {name:"Go-Kart Racing",          c:"#6F92B5", day:"day",   latD:0.0001,  lngD:-0.0001, mx:126, my:284, lb:"GO-KART RACING"},
 };
 const CENTER={lat:51.0832,lng:-114.0570};
 for(const V of Object.values(VENUES)){V.lat=CENTER.lat+V.latD;V.lng=CENTER.lng+V.lngD;}
@@ -364,14 +373,20 @@ const EV=[
  {n:"Puppet Show · Why the Rabbit's Nose Wiggles",v:"kids",t:dt("day",12,0)},
  {n:"Rattle & Strum",v:"kids",t:dt("day",13,0)},
  {n:"Congress Coffee Kids' Corner",v:"kids",ad:"10am – 4pm",day:"day"},
+ {n:"Pet-Friendly Activities",v:"kids",ad:"10am – 4pm",day:"day"},
 
  {n:"Rides N' Rods · Car & Motorcycle Show & Shine",v:"carshow",ad:"10am – 4pm",day:"day"},
+ {n:"Mini Car Derby",v:"carshow",ad:"10am – 4pm",day:"day"},
+ {n:"Antique Fire Trucks on Display",v:"carshow",ad:"10am – 4pm",day:"day"},
 
- {n:"Vendor Market · Local Businesses & Makers",v:"vendors",ad:"10am – 4pm",day:"day"},
+ {n:"Artisan Market · Local Makers",v:"vendors",ad:"10am – 4pm",day:"day"},
  {n:"Showcase Your Business Booths",v:"vendors",ad:"10am – 4pm",day:"day"},
+ {n:"Spin 2 Win Prizes · Calgary Transit",v:"vendors",ad:"10am – 4pm",day:"day"},
 
  {n:"Food Truck Alley",v:"foodd",ad:"10am – 4pm",day:"day"},
  {n:"BBQ's Galore",v:"foodd",ad:"10am – 4pm",day:"day"},
+
+ {n:"Go-Kart Racing",v:"gokart",ad:"10am – 4pm",day:"day"},
 ];
 for(const e of EV) e.day=e.day||DAYS.night.key, e.day=(VENUES[e.v].day);
 
@@ -381,9 +396,9 @@ const VZH={
   moto:"摩托車 特技 表演 引擎", market:"市集 手作 攤位 購物",
   foodn:"美食 餐車 啤酒 小吃", artwalk:"藝術 塗鴉 壁畫 互動投影 工作室",
   citizen:"啤酒 派對 餐酒 精釀", church:"電影 露天放映 復古",
-  mainday:"主舞台 音樂 現場演出 DJ 選美", kids:"兒童 親子 表演 音樂 布偶",
-  carshow:"改裝車 摩托車 展示 汽車", vendors:"市集 攤位 在地商家 購物",
-  foodd:"美食 餐車 燒烤",
+  mainday:"主舞台 音樂 現場演出 DJ 選美", kids:"兒童 親子 表演 音樂 布偶 寵物",
+  carshow:"改裝車 摩托車 展示 汽車 骨董消防車", vendors:"市集 攤位 在地商家 購物 抽獎",
+  foodd:"美食 餐車 燒烤", gokart:"卡丁車 賽車 兒童",
 };
 const NZH=[
  [/DJ|molly fi/i,"DJ 電音"],
@@ -398,6 +413,9 @@ const NZH=[
  [/drive-in|movie/i,"電影"],
  [/market|vendor|business/i,"市集 攤位"],
  [/food truck|bbq/i,"美食 餐車"],
+ [/derby|go-kart|kart/i,"賽車 卡丁車"],
+ [/fire truck/i,"消防車 展示"],
+ [/spin 2 win|transit/i,"抽獎 摸彩"],
 ];
 for(const e of EV){
   let z=VZH[e.v]||"";
@@ -583,14 +601,35 @@ function renderNextUp(){
 }
 
 /* ================= INTRO ================= */
+const TROPHIES=["Crowd Favourite","Best Rat Rod","Best Engine Bay","Most Unique Build","Best Community Club Display","Chrome Crown Award"];
+const GET_INVOLVED=[
+  {t:"Apply to be a Vendor",href:"https://www.greenviewindustrial.com/t2e-festival"},
+  {t:"Apply to be a Volunteer",href:"https://www.greenviewindustrial.com/t2e-festival"},
+  {t:"Show Your Ride",href:"https://www.greenviewindustrial.com/t2e-festival"},
+  {t:"Showcase Your Business",href:"https://www.greenviewindustrial.com/t2e-festival"},
+];
 function renderIntro(){
-  const D=DAYS[curDay];
-  document.getElementById("intro").innerHTML=`
-    <div class="disp">${curDay==="night"?"When the sun goes down, Greenview lights up.":"Two days. Endless discoveries."}</div>
-    <p>${curDay==="night"
-      ?"T2E Night Shift：機車特技、樂團現場演出、月光市集、塗鴉藝術與露天電影，橫跨七個街區的工業夜。"
-      :"Day Fest：改裝車展、親子表演、在地市集與美食餐車，闔家同樂的白日慶典。"}</p>
-    <span class="free">Admission is Free · Everyone Welcome</span>`;
+  const linkrow=`<div class="linkrow">${GET_INVOLVED.map(l=>`<a href="${l.href}" target="_blank" rel="noopener">${esc(l.t)} →</a>`).join("")}</div>`;
+  if(curDay==="night"){
+    document.getElementById("intro").innerHTML=`
+      <div class="disp">When the sun goes down, Greenview lights up!</div>
+      <p>T2E Night Shift is our newest festival experience — an evening celebration of music, art, culture, and creativity after dark.</p>
+      <p>Wander through a moonlit market, experience glow art and projections, admire custom motorcycles, enjoy local food and craft beverages, and discover unexpected activations tucked throughout the district.</p>
+      <span class="free">Admission is Free · Everyone Welcome</span>
+      <div class="credit">Proudly co-presented by Fresh Start Recovery.</div>
+      ${linkrow}`;
+  }else{
+    document.getElementById("intro").innerHTML=`
+      <div class="disp">When the sun comes up, Greenview shows off!</div>
+      <p>The energy shifts into high gear for our signature daytime T2E festival — now celebrating 8 years!</p>
+      <p>Explore the Rides N' Rods Show &amp; Shine, browse the Artisan Market, cheer on the Mini Car Derby, enjoy live music, try your hand at go-kart racing, and discover the free family Kid Zone &amp; pet-friendly activities.</p>
+      <span class="free">Admission is Free · Everyone Welcome</span>
+      <div class="trophies">
+        <div class="t-title">2026 Rides N' Rods Trophy Categories</div>
+        <div class="trophy-list">${TROPHIES.map(t=>`<span>${esc(t)}</span>`).join("")}</div>
+      </div>
+      ${linkrow}`;
+  }
 }
 
 /* ================= DAY TABS ================= */
@@ -672,6 +711,7 @@ function renderMap(){
     h+=rr("kids",70,42,true);
     h+=rr("vendors",64,40,true);
     h+=rr("foodd",64,40,true);
+    h+=rr("gokart",56,44,true);
     {const V=VENUES.carshow,x=V.mx,y=V.my;
      h+=`<g class="zone" data-v="carshow">
        <rect x="${x-14}" y="${y-70}" width="28" height="140" fill="${V.c}" opacity=".55"/>
