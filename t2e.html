@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>T2E Fest 2026 · Greenview Industrial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bevan&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1E3835; --bg2:#193029; --card:#274B47; --ink:#F4E8C8; --body:#DCEAE3; --sub:#9BC0B5; --line:#3A5D57;
+  --coral:#E1573C; --mustard:#EAC768; --olive:#5C6B3A; --teal2:#4E8C7E;
+  --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--body);
+  font-family:"Space Grotesk", system-ui, -apple-system, "PingFang TC", sans-serif;
+  min-height:100dvh; padding-bottom:64px;
+}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+input{font:inherit}
+h1,h2,.disp{font-family:"Bevan","Space Grotesk",sans-serif;letter-spacing:.01em}
+
+/* ---------- header ---------- */
+header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(25,48,41,.94); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  border-top:4px solid var(--olive);
+  padding:14px 20px 0;
+}
+.hd-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.hd-title{font-family:"Bevan",sans-serif;font-size:17px;letter-spacing:.03em;color:var(--ink)}
+.hd-title span{color:var(--coral)}
+.hd-clock{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hd-sub{font-size:11px;color:var(--sub);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+.daytabs{display:flex;gap:8px;margin:12px 0 10px}
+.daytab{
+  flex:1;padding:10px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);
+  text-align:left;transition:all .2s ease;
+}
+.daytab b{display:block;font-family:"Bevan",sans-serif;font-size:13px;color:var(--ink);letter-spacing:.02em}
+.daytab small{display:block;font-size:10.5px;color:var(--sub);margin-top:2px;letter-spacing:.03em}
+.daytab.on{background:var(--coral);border-color:var(--coral)}
+.daytab.on b,.daytab.on small{color:#2A1610}
+
+.searchbar{margin:12px 0 10px;position:relative}
+.searchbar input{
+  width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:999px;
+  background:var(--card);font-size:14px;color:var(--body);outline:none;
+  transition:border-color .2s ease;
+}
+.searchbar input:focus{border-color:var(--mustard)}
+.searchbar input::placeholder{color:#7FA098}
+.searchbar .clr{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  width:26px;height:26px;border-radius:50%;background:var(--line);color:var(--ink);
+  font-size:13px;line-height:26px;display:none;
+}
+.searchbar.has-q .clr{display:block}
+
+.chips{
+  display:flex;gap:8px;overflow-x:auto;padding:0 0 12px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;
+  border:1px solid var(--line);background:var(--card);color:var(--sub);
+  white-space:nowrap;transition:all .2s ease;display:flex;align-items:center;gap:6px;
+}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--c,#999)}
+.chip.on{background:var(--ink);color:var(--bg2);border-color:var(--ink)}
+.chip.on .dot{background:var(--c,#999)}
+
+/* ---------- sections ---------- */
+main{padding:0 20px;max-width:720px;margin:0 auto}
+.sec-label{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);
+  margin:26px 0 10px;display:flex;align-items:center;gap:10px;
+}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.sec-label.now-label{color:var(--coral)}
+.sec-label.now-label::before{
+  content:"";width:8px;height:8px;border-radius:50%;background:var(--coral);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ---------- event card ---------- */
+.ev{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 15px;margin-bottom:9px;
+  display:grid;grid-template-columns:58px 1fr 30px;gap:14px;align-items:start;
+  border-left:3px solid var(--c,#CCC);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+@media(hover:hover){
+  .ev:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+}
+.ev-time{
+  font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25;color:var(--ink);
+}
+.ev-time small{display:block;font-size:10px;font-weight:400;color:var(--sub);letter-spacing:.06em}
+.ev-name{font-size:14.5px;font-weight:500;line-height:1.4;color:var(--body)}
+.ev-venue{font-size:11.5px;color:var(--sub);margin-top:3px;letter-spacing:.03em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ev-venue .dot{width:6px;height:6px;border-radius:50%;background:var(--c,#999);flex:0 0 auto}
+.badge{
+  display:inline-block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 7px;border-radius:999px;font-weight:600;
+}
+.badge.tk{background:var(--olive);color:var(--ink)}
+.badge.live{background:var(--coral);color:#2A1610}
+.badge.soon{background:var(--mustard);color:#3A2C0B}
+.badge.done{background:var(--line);color:var(--sub)}
+.ev.is-done{opacity:.4}
+.ev.is-live{border-color:var(--coral);border-left-color:var(--coral)}
+
+/* hour group */
+.hour-tag{
+  font-size:12px;font-weight:600;color:var(--sub);font-variant-numeric:tabular-nums;
+  margin:16px 0 8px;letter-spacing:.06em;
+}
+
+/* all-day */
+details.allday{margin-top:8px}
+details.allday summary{
+  list-style:none;font-size:12.5px;color:var(--sub);padding:11px 15px;
+  border:1px dashed var(--line);border-radius:var(--r);
+  display:flex;justify-content:space-between;align-items:center;
+}
+details.allday summary::-webkit-details-marker{display:none}
+details.allday summary .tw{transition:transform .2s ease;font-size:11px}
+details.allday[open] summary .tw{transform:rotate(90deg)}
+details.allday .ev{grid-template-columns:1fr 30px}
+.ad-hours{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+
+/* empty */
+.empty{
+  text-align:center;padding:56px 20px;color:var(--sub);font-size:13.5px;line-height:1.8;
+}
+.empty b{display:block;font-size:15px;color:var(--ink);font-weight:500;margin-bottom:4px}
+
+footer{
+  max-width:720px;margin:36px auto 0;padding:16px 20px 0;border-top:1px solid var(--line);
+  font-size:10.5px;color:var(--sub);line-height:1.8;letter-spacing:.03em;
+}
+footer a{color:var(--mustard)}
+
+/* ---------- next-up banner ---------- */
+.nextup{max-width:720px;margin:14px auto 0;padding:0 20px;display:none}
+.nextup.show{display:block}
+.nu-card{
+  background:var(--coral);color:#2A1610;border-radius:var(--r);
+  padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.nu-l{min-width:0}
+.nu-tag{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.65}
+.nu-name{font-size:14.5px;font-weight:700;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nu-meta{font-size:11.5px;opacity:.8;margin-top:2px}
+.nu-r{text-align:right;flex:0 0 auto;font-variant-numeric:tabular-nums}
+.nu-count{font-size:19px;font-weight:700;line-height:1.1}
+.nu-count small{font-size:10px;font-weight:400;opacity:.7;display:block;letter-spacing:.08em}
+
+/* ---------- star ---------- */
+.star{
+  width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;
+  color:#4B6E67;transition:color .2s ease, transform .2s ease;align-self:center;
+}
+.star:active{transform:scale(.85)}
+.star.on{color:var(--coral)}
+.chip.fav-chip.on{background:var(--coral);border-color:var(--coral);color:#2A1610}
+
+/* ---------- map ---------- */
+.mapsec{margin:16px 0 0;padding:0}
+.map-head{display:flex;justify-content:space-between;align-items:center;margin:0 auto 8px;padding:0 20px;max-width:720px}
+.map-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.locate{
+  font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;
+  border:1px solid var(--ink);color:var(--ink);transition:all .2s ease;
+}
+.locate.on{background:var(--ink);color:var(--bg2)}
+.locate:disabled{opacity:.4}
+.here-btn{
+  font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;
+  background:var(--ink);color:var(--bg2);transition:opacity .2s ease;
+}
+.here-btn:disabled{opacity:.4}
+.namepick{
+  display:none;gap:8px;margin:0 auto 10px;padding:0 20px;max-width:720px;flex-wrap:wrap;
+}
+.namepick.show{display:flex}
+.namepick button{
+  padding:8px 16px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);
+  font-size:13px;letter-spacing:.04em;transition:all .15s ease;
+}
+.namepick button:active{background:var(--ink);color:var(--bg2)}
+.namepick .cancel{border-color:var(--line);color:var(--sub)}
+.fr-ring{animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.15}50%{opacity:.6}}
+.mapbox{background:var(--bg2);border-radius:0}
+.mapbox svg{display:block;width:100%;height:auto}
+.zone{cursor:pointer;transition:opacity .2s ease}
+.zone rect{rx:3}
+.zone text{
+  font-family:"Space Grotesk",system-ui,sans-serif;font-size:7.5px;letter-spacing:.04em;
+  fill:#F4E8C8;pointer-events:none;
+}
+.zone.dim{opacity:.22}
+#mapsvg{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+#mapsvg:active{cursor:grabbing}
+#mapsvg .lbl-sm{display:none}
+#mapsvg.zoomed .lbl-sm{display:block}
+.road-lb{font-size:6px;fill:#5D8579;letter-spacing:.12em;font-family:"Space Grotesk"}
+#gpspin{transition:transform .8s ease}
+.pin-ring{animation:ring 2.4s ease-out infinite;transform-origin:center}
+@keyframes ring{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
+.map-note{font-size:10.5px;color:var(--sub);margin:6px auto 0;padding:0 20px;max-width:720px;line-height:1.6}
+.nearby{margin:12px auto 0;padding:0 20px;max-width:720px;display:none}
+.nearby.show{display:block}
+.nb{
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px;
+}
+.nb:last-child{border-bottom:none}
+.nb-l{display:flex;align-items:center;gap:8px;min-width:0}
+.nb-l .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.nb-v{font-weight:500;white-space:nowrap;color:var(--ink)}
+.nb-e{color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nb-d{font-size:11.5px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
+.nb-d .live-t{color:var(--coral);font-weight:600}
+
+/* ---------- intro ---------- */
+.intro{max-width:720px;margin:16px auto 0;padding:0 20px}
+.intro .disp{font-size:22px;color:var(--ink);line-height:1.25}
+.intro p{font-size:12.5px;color:var(--sub);margin-top:8px;line-height:1.7}
+.intro .free{display:inline-block;margin-top:10px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--mustard);color:#3A2C0B;padding:5px 12px;border-radius:999px;font-weight:600}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-top">
+    <div class="hd-title">T2E <span>FEST</span> 2026</div>
+    <div class="hd-clock" id="clock">--:--</div>
+  </div>
+  <div class="hd-sub">Greenview Industrial · 36 Ave &amp; 2 St NE, Calgary</div>
+  <div class="daytabs" id="daytabs"></div>
+  <div class="searchbar" id="sb">
+    <input id="q" type="search" placeholder="搜尋：DJ Molly Fi、摩托車、市集、樂團⋯" autocomplete="off">
+    <button class="clr" id="clr" aria-label="清除">✕</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</header>
+
+<div class="nextup" id="nextup"></div>
+
+<section class="intro" id="intro"></section>
+
+<section class="mapsec">
+  <div class="map-head">
+    <div class="map-title">Street Map · 點色塊篩選 · 雙指縮放</div>
+    <div style="display:flex;gap:8px">
+      <button class="here-btn" id="hereBtn">I'm here</button>
+      <button class="locate" id="locBtn">定位</button>
+    </div>
+  </div>
+  <div class="namepick" id="namepick"></div>
+  <div class="mapbox"><svg id="mapsvg" viewBox="0 0 360 330" role="img" aria-label="園區示意地圖"></svg></div>
+  <div class="map-note" id="mapNote">場域位置為示意配置（非精準比例）。按「定位」後以你的 GPS 顯示附近攤位。</div>
+  <div class="nearby" id="nearby"></div>
+</section>
+
+<main id="main"></main>
+
+<footer>
+  T2E Fest（Tango 2 Echo）由 Greenview Industrial Business Improvement Area 主辦，入場全程免費。<br>
+  資料依現場海報整理，細節請以主辦單位公告為準；時間依你的裝置時鐘自動判斷「進行中／即將開始」。<br>
+  Stampede 版本 → <a href="/index.html">7/7 節目表</a>
+</footer>
+
+<script>
+/* ================= DATA ================= */
+const DAYS = {
+  night:{
+    key:"night", label:"NIGHT SHIFT", sub:"Sat, Aug 1 · 6–11pm",
+    date:[2026,7,1], openH:18, openM:0, closeH:23, closeM:0,
+  },
+  day:{
+    key:"day", label:"DAY FEST", sub:"Sun, Aug 2 · 10am–4pm",
+    date:[2026,7,2], openH:10, openM:0, closeH:16, closeM:0,
+  }
+};
+
+const VENUES = {
+  mainstage:{name:"Main Stage",              c:"#E1573C", day:"night", latD:0.0000,  lngD:0.0000,  mx:96,  my:150, lb:"MAIN STAGE"},
+  teamsters:{name:"Teamsters Stage",         c:"#4E8C7E", day:"night", latD:0.0006,  lngD:0.0016,  mx:266, my:150, lb:"TEAMSTERS STAGE"},
+  moto:     {name:"Motorcycle Showcase",     c:"#8C4A3A", day:"night", latD:0.0003,  lngD:0.0008,  mx:180, my:170, lb:"MOTO SHOWCASE"},
+  market:   {name:"Moonlit Market",          c:"#EAC768", day:"night", latD:0.0002,  lngD:0.0000,  mx:96,  my:216, lb:"MOONLIT MARKET"},
+  foodn:    {name:"Food Trucks",             c:"#D97A3D", day:"night", latD:0.0005,  lngD:0.0015,  mx:266, my:216, lb:"FOOD TRUCKS"},
+  artwalk:  {name:"Glow Mural & Art Walk",   c:"#8B7FBF", day:"night", latD:0.0001,  lngD:-0.0003, mx:70,  my:284, lb:"GLOW ART WALK"},
+  citizen:  {name:"Citizen Brewing",         c:"#C98A2E", day:"night", latD:0.0001,  lngD:-0.0001, mx:126, my:284, lb:"CITIZEN BREWING"},
+  church:   {name:"Centre St. Church",       c:"#4A6FA0", day:"night", latD:0.0008,  lngD:0.0018,  mx:266, my:78,  lb:"DRIVE-IN LOT"},
+
+  mainday:  {name:"Main Stage",              c:"#E1573C", day:"day",   latD:0.0000,  lngD:0.0000,  mx:96,  my:150, lb:"MAIN STAGE"},
+  kids:     {name:"Kids Shows",              c:"#EAC768", day:"day",   latD:0.0006,  lngD:0.0016,  mx:266, my:150, lb:"KIDS SHOWS"},
+  carshow:  {name:"Rides N' Rods Show",      c:"#8C4A3A", day:"day",   latD:0.0003,  lngD:0.0008,  mx:180, my:170, lb:"CAR SHOW"},
+  vendors:  {name:"Vendor Market",           c:"#4E8C7E", day:"day",   latD:0.0002,  lngD:0.0000,  mx:96,  my:216, lb:"VENDOR MARKET"},
+  foodd:    {name:"Food Trucks",             c:"#D97A3D", day:"day",   latD:0.0005,  lngD:0.0015,  mx:266, my:216, lb:"FOOD TRUCKS"},
+};
+const CENTER={lat:51.0832,lng:-114.0570};
+for(const V of Object.values(VENUES)){V.lat=CENTER.lat+V.latD;V.lng=CENTER.lng+V.lngD;}
+
+function dt(dayKey,h,mi){const d=DAYS[dayKey].date;return new Date(d[0],d[1],d[2],h,mi).getTime();}
+
+const EV=[
+ // ---------------- NIGHT SHIFT · Sat Aug 1 · 6-11pm ----------------
+ {n:"DJ Molly Fi",v:"mainstage",t:dt("night",18,0)},
+ {n:"Sunstrokes",v:"mainstage",t:dt("night",19,0)},
+ {n:"DJ Molly Fi",v:"mainstage",t:dt("night",20,0)},
+ {n:"Ashley Hundred",v:"mainstage",t:dt("night",21,0)},
+ {n:"DJ Molly Fi",v:"mainstage",t:dt("night",22,0)},
+ {n:"Yukon Blonde",v:"mainstage",t:dt("night",23,0),tk:1},
+
+ {n:"Cabaret Co.",v:"teamsters",t:dt("night",19,0)},
+ {n:"Cabaret Co.",v:"teamsters",t:dt("night",20,0)},
+ {n:"Drum Circle · Chantal Stormsong Chagnon",v:"teamsters",t:dt("night",21,0)},
+ {n:"Jade Elephant",v:"teamsters",t:dt("night",22,0)},
+ {n:"Drum Circle · Chantal Stormsong Chagnon",v:"teamsters",t:dt("night",23,0)},
+
+ {n:"The Vanishing Ones · Motorcycle Stunt Show",v:"moto",t:dt("night",19,0)},
+ {n:"The Vanishing Ones · Motorcycle Trick Riders",v:"moto",t:dt("night",21,30)},
+
+ {n:"Moonlit Market · Local Makers & Artisans",v:"market",ad:"6 – 11pm",day:"night"},
+ {n:"Cold Garden Beer Garden",v:"foodn",ad:"6 – 11pm",day:"night"},
+ {n:"Food Truck Alley",v:"foodn",ad:"6 – 11pm",day:"night"},
+ {n:"Idle Eyes / Burnt Toast Studio / Congress Coffee",v:"artwalk",ad:"6 – 11pm",day:"night"},
+ {n:"Urban Painter · Live Mural",v:"artwalk",ad:"6 – 11pm",day:"night"},
+ {n:"Greenview Reflections · Interactive Projections",v:"artwalk",ad:"6 – 11pm",day:"night"},
+ {n:"Citizen Brewing · Beer & Snacks",v:"citizen",ad:"6 – 11pm",day:"night"},
+ {n:"Citizen Afterparty",v:"citizen",t:dt("night",23,0),tk:1},
+ {n:"Sunset Drive-In Movie Tribute",v:"church",ad:"8 – 11pm",day:"night"},
+ {n:"Indigenous Fire & Steel Activation",v:"market",ad:"6 – 9pm",day:"night"},
+ {n:"Glow Ring Activity",v:"artwalk",ad:"6 – 11pm",day:"night"},
+
+ // ---------------- DAY FEST · Sun Aug 2 · 10am-4pm ----------------
+ {n:"DJ Molly Fi",v:"mainday",t:dt("day",10,0)},
+ {n:"Hellbound Honey's Pin-Up Contest",v:"mainday",t:dt("day",11,0)},
+ {n:"The Lovebullies",v:"mainday",t:dt("day",12,0)},
+ {n:"Natalie Inga & The Lady Bros",v:"mainday",t:dt("day",13,0)},
+ {n:"Peter & The Wolves",v:"mainday",t:dt("day",14,0)},
+ {n:"Rides N' Rods · Trophy Winners Announced",v:"mainday",t:dt("day",15,0)},
+ {n:"Pet Parade!",v:"mainday",t:dt("day",16,0)},
+
+ {n:"Rattle & Strum · Affair to Remember Kid Zone",v:"kids",t:dt("day",11,0)},
+ {n:"Puppet Show · Why the Rabbit's Nose Wiggles",v:"kids",t:dt("day",12,0)},
+ {n:"Rattle & Strum",v:"kids",t:dt("day",13,0)},
+ {n:"Congress Coffee Kids' Corner",v:"kids",ad:"10am – 4pm",day:"day"},
+
+ {n:"Rides N' Rods · Car & Motorcycle Show & Shine",v:"carshow",ad:"10am – 4pm",day:"day"},
+
+ {n:"Vendor Market · Local Businesses & Makers",v:"vendors",ad:"10am – 4pm",day:"day"},
+ {n:"Showcase Your Business Booths",v:"vendors",ad:"10am – 4pm",day:"day"},
+
+ {n:"Food Truck Alley",v:"foodd",ad:"10am – 4pm",day:"day"},
+ {n:"BBQ's Galore",v:"foodd",ad:"10am – 4pm",day:"day"},
+];
+for(const e of EV) e.day=e.day||DAYS.night.key, e.day=(VENUES[e.v].day);
+
+/* ============ 中文模糊標籤 ============ */
+const VZH={
+  mainstage:"主舞台 音樂 現場演出 DJ", teamsters:"舞台 音樂 鼓圈 現場演出",
+  moto:"摩托車 特技 表演 引擎", market:"市集 手作 攤位 購物",
+  foodn:"美食 餐車 啤酒 小吃", artwalk:"藝術 塗鴉 壁畫 互動投影 工作室",
+  citizen:"啤酒 派對 餐酒 精釀", church:"電影 露天放映 復古",
+  mainday:"主舞台 音樂 現場演出 DJ 選美", kids:"兒童 親子 表演 音樂 布偶",
+  carshow:"改裝車 摩托車 展示 汽車", vendors:"市集 攤位 在地商家 購物",
+  foodd:"美食 餐車 燒烤",
+};
+const NZH=[
+ [/DJ|molly fi/i,"DJ 電音"],
+ [/motorcycle|vanishing ones/i,"摩托車 特技"],
+ [/drum circle/i,"鼓圈 音樂 原住民"],
+ [/pin-up|pageant/i,"選美 表演"],
+ [/rides n' rods|car|show & shine/i,"改裝車 展示"],
+ [/puppet|kid|rattle|pet parade/i,"兒童 親子"],
+ [/beer|brewing|garden/i,"啤酒 精釀"],
+ [/mural|painter|projections|studio|art/i,"藝術 壁畫"],
+ [/coffee/i,"咖啡"],
+ [/drive-in|movie/i,"電影"],
+ [/market|vendor|business/i,"市集 攤位"],
+ [/food truck|bbq/i,"美食 餐車"],
+];
+for(const e of EV){
+  let z=VZH[e.v]||"";
+  for(const[re,t]of NZH) if(re.test(e.n)) z+=" "+t;
+  e.zh=z;
+}
+EV.forEach((e,i)=>e.id=i);
+
+/* ================= STATE ================= */
+let curDay="night";
+let activeVenue="all", query="", favOnly=false;
+let favs=new Set();
+const store={
+  get(){try{const r=localStorage.getItem("t2e-favs-2026");return r?JSON.parse(r):[]}catch(_){return[]}},
+  set(a){try{localStorage.setItem("t2e-favs-2026",JSON.stringify(a))}catch(_){/* 私密模式等情況：僅存記憶體 */}}
+};
+favs=new Set(store.get());
+const deviceId=(()=>{try{
+  let d=localStorage.getItem("t2e-device");
+  if(!d){d=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));localStorage.setItem("t2e-device",d)}
+  return d;
+}catch(_){return "mem-"+Math.random().toString(36).slice(2)}})();
+let syncTimer=null;
+function pushFavs(){
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>{
+    fetch(`/api/t2e-favs?device=${encodeURIComponent(deviceId)}`,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({favs:[...favs]})
+    }).catch(()=>{/* 離線或後端未設定：本機仍完整可用 */});
+  },800);
+}
+async function pullFavs(){
+  try{
+    const r=await fetch(`/api/t2e-favs?device=${encodeURIComponent(deviceId)}`);
+    if(!r.ok)return;
+    const d=await r.json();
+    if(Array.isArray(d.favs)&&d.favs.length){
+      const before=favs.size;
+      d.favs.forEach(id=>favs.add(id));
+      store.set([...favs]);
+      if(favs.size!==before){renderChips();render()}
+    }
+  }catch(_){/* 靜默 */}
+}
+pullFavs();
+function toggleFav(id){
+  favs.has(id)?favs.delete(id):favs.add(id);
+  store.set([...favs]);
+  pushFavs();
+  render(); renderNextUp();
+}
+const LIVE_WINDOW=45*60000;   // 開始後 45 分鐘內視為進行中
+const SOON_WINDOW=60*60000;   // 60 分鐘內開始視為即將開始
+
+/* ================= HELPERS ================= */
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function fmt(ts){
+  const d=new Date(ts);
+  let h=d.getHours()%12; if(h===0)h=12;
+  const ap=d.getHours()>=12?"PM":"AM";
+  return {h:`${h}:${String(d.getMinutes()).padStart(2,"0")}`, ap};
+}
+
+/* ================= RENDER ================= */
+function evCard(e,status){
+  const V=VENUES[e.v];
+  const f=e.ad?null:fmt(e.t);
+  let badge="";
+  if(e.tk) badge+=`<span class="badge tk">Ticketed</span>`;
+  if(status==="live") badge+=`<span class="badge live">進行中</span>`;
+  else if(status==="soon") badge+=`<span class="badge soon">即將開始</span>`;
+  const cls=`ev${status==="done"?" is-done":""}${status==="live"?" is-live":""}`;
+  const timeCol=e.ad
+    ? `<div class="ev-time" style="font-size:12px;font-weight:500">ALL<br>DAY</div>`
+    : `<div class="ev-time">${f.h}<small>${f.ap}</small></div>`;
+  const on=favs.has(e.id);
+  return `<div class="${cls}" style="--c:${V.c}">
+    ${timeCol}
+    <div>
+      <div class="ev-name">${esc(e.n)}</div>
+      <div class="ev-venue"><span class="dot"></span>${esc(V.name)}${e.ad?` <span class="ad-hours">· ${e.ad}</span>`:""} ${badge}</div>
+    </div>
+    <button class="star${on?" on":""}" data-fav="${e.id}" aria-label="${on?"移出想去":"加入想去"}">${on?"♥":"♡"}</button>
+  </div>`;
+}
+
+function statusOf(e,now){
+  if(e.ad) return "ad";
+  if(now>=e.t && now<e.t+LIVE_WINDOW) return "live";
+  if(e.t>now && e.t<=now+SOON_WINDOW) return "soon";
+  if(e.t+LIVE_WINDOW<=now) return "done";
+  return "later";
+}
+
+function render(){
+  const now=Date.now();
+  const tokens=query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const match=e=>{
+    if(e.day!==curDay)return false;
+    if(favOnly&&!favs.has(e.id))return false;
+    if(activeVenue!=="all"&&e.v!==activeVenue)return false;
+    if(tokens.length){
+      const hay=(e.n+" "+VENUES[e.v].name+" "+e.zh).toLowerCase();
+      for(const t of tokens) if(!hay.includes(t)) return false;
+    }
+    return true;
+  };
+  const timed=EV.filter(e=>!e.ad&&match(e)).sort((a,b)=>a.t-b.t);
+  const alldays=EV.filter(e=>e.ad&&match(e));
+
+  const live=timed.filter(e=>statusOf(e,now)==="live");
+  const soon=timed.filter(e=>statusOf(e,now)==="soon");
+  const rest=timed.filter(e=>{const s=statusOf(e,now);return s!=="live"&&s!=="soon"});
+
+  let html="";
+  if(live.length){
+    html+=`<div class="sec-label now-label">現在進行中</div>`;
+    html+=live.map(e=>evCard(e,"live")).join("");
+  }
+  if(soon.length){
+    html+=`<div class="sec-label">60 分鐘內開始</div>`;
+    html+=soon.map(e=>evCard(e,"soon")).join("");
+  }
+  if(rest.length){
+    html+=`<div class="sec-label">${DAYS[curDay].label} 時間表</div>`;
+    let lastHour=-1;
+    for(const e of rest){
+      const d=new Date(e.t), h=d.getHours();
+      if(h!==lastHour){
+        lastHour=h;
+        const f=fmt(e.t);
+        html+=`<div class="hour-tag">${f.h.split(":")[0]} ${f.ap}</div>`;
+      }
+      html+=evCard(e,statusOf(e,now));
+    }
+  }
+  if(alldays.length){
+    html+=`<details class="allday"${(tokens.length||activeVenue!=="all"||favOnly)?" open":""}>
+      <summary>全程開放（${alldays.length}）<span class="tw">▸</span></summary>
+      <div style="margin-top:9px">${alldays.map(e=>evCard(e,"ad")).join("")}</div>
+    </details>`;
+  }
+  if(!html){
+    html=favOnly
+      ?`<div class="empty"><b>還沒有想去的活動</b>點卡片右側的 ♡ 加入，這裡會依時間排好。</div>`
+      :`<div class="empty"><b>沒有符合的活動</b>換個關鍵字，或把場地篩選切回「全部」。</div>`;
+  }
+  const mainEl=document.getElementById("main");
+  mainEl.innerHTML=html;
+  mainEl.querySelectorAll("[data-fav]").forEach(b=>b.addEventListener("click",ev=>{
+    ev.stopPropagation(); toggleFav(+b.dataset.fav);
+  }));
+  renderNextUp();
+}
+
+/* ================= NEXT UP ================= */
+function renderNextUp(){
+  const box=document.getElementById("nextup");
+  const now=Date.now();
+  const upcoming=EV.filter(e=>favs.has(e.id)&&!e.ad&&e.t+LIVE_WINDOW>now).sort((a,b)=>a.t-b.t);
+  if(!upcoming.length){box.classList.remove("show");box.innerHTML="";return}
+  const e=upcoming[0], V=VENUES[e.v], f=fmt(e.t);
+  const diff=e.t-now;
+  let count, unit;
+  if(diff<=0){count="LIVE";unit="進行中"}
+  else if(diff<3600000){count=Math.round(diff/60000);unit="分鐘後"}
+  else{const mins=Math.round(diff/60000);count=`${Math.floor(mins/60)}:${String(mins%60).padStart(2,"0")}`;unit="小時後"}
+  let walk="";
+  if(userPos){
+    const d=distM(userPos.lat,userPos.lng,V.lat,V.lng);
+    walk=` · 距離 ${d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km"}，步行約 ${Math.max(1,Math.round(d/80))} 分`;
+  }
+  box.innerHTML=`<div class="nu-card">
+    <div class="nu-l">
+      <div class="nu-tag">下一站${upcoming.length>1?` · 之後還有 ${upcoming.length-1} 個`:""}</div>
+      <div class="nu-name">${esc(e.n)}</div>
+      <div class="nu-meta">${f.h} ${f.ap} · ${esc(V.name)}${walk}</div>
+    </div>
+    <div class="nu-r"><div class="nu-count">${count}<small>${unit}</small></div></div>
+  </div>`;
+  box.classList.add("show");
+}
+
+/* ================= INTRO ================= */
+function renderIntro(){
+  const D=DAYS[curDay];
+  document.getElementById("intro").innerHTML=`
+    <div class="disp">${curDay==="night"?"When the sun goes down, Greenview lights up.":"Two days. Endless discoveries."}</div>
+    <p>${curDay==="night"
+      ?"T2E Night Shift：機車特技、樂團現場演出、月光市集、塗鴉藝術與露天電影，橫跨七個街區的工業夜。"
+      :"Day Fest：改裝車展、親子表演、在地市集與美食餐車，闔家同樂的白日慶典。"}</p>
+    <span class="free">Admission is Free · Everyone Welcome</span>`;
+}
+
+/* ================= DAY TABS ================= */
+function renderDayTabs(){
+  const el=document.getElementById("daytabs");
+  el.innerHTML=Object.values(DAYS).map(D=>
+    `<button class="daytab${curDay===D.key?" on":""}" data-day="${D.key}">
+      <b>${D.label}</b><small>${D.sub}</small>
+    </button>`).join("");
+  el.querySelectorAll(".daytab").forEach(b=>b.addEventListener("click",()=>{
+    curDay=b.dataset.day; activeVenue="all"; favOnly=false;
+    renderDayTabs(); renderIntro(); renderChips(); renderMap(); render();
+  }));
+}
+
+/* ================= CHIPS ================= */
+function renderChips(){
+  const el=document.getElementById("chips");
+  let h=`<button class="chip fav-chip${favOnly?" on":""}" data-fav-chip>♥ 想去${favs.size?` ${favs.size}`:""}</button>`;
+  h+=`<button class="chip${activeVenue==="all"&&!favOnly?" on":""}" data-v="all">全部</button>`;
+  for(const[k,V]of Object.entries(VENUES)){
+    if(V.day!==curDay)continue;
+    h+=`<button class="chip${activeVenue===k?" on":""}" data-v="${k}" style="--c:${V.c}"><span class="dot"></span>${esc(V.name)}</button>`;
+  }
+  el.innerHTML=h;
+  el.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+    if(b.hasAttribute("data-fav-chip")){favOnly=!favOnly}
+    else{activeVenue=b.dataset.v; favOnly=false}
+    renderChips(); render();
+    if(document.querySelector("#mapsvg .zone")) syncMap();
+  }));
+}
+
+/* ================= MAP ================= */
+const MAP={W:360,H:330};
+const GATES=[
+  {mx:180,my:16, lb:"38TH AVE NE"},
+  {mx:180,my:328,lb:"35TH AVE NE"},
+  {mx:16, my:170,lb:"1 ST NE"},
+  {mx:344,my:170,lb:"3 ST NE"},
+];
+function renderMap(){
+  const svg=document.getElementById("mapsvg");
+  const rr=(k,w,h,labelAbove=false)=>{
+    const V=VENUES[k];if(!V)return"";
+    const x=V.mx,y=V.my;
+    const ly=labelAbove?y-h/2-6:y+4;
+    return `<g class="zone" data-v="${k}">
+      <rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" fill="${V.c}" opacity=".88"/>
+      <text x="${x}" y="${ly}" text-anchor="middle">${V.lb}</text></g>`;
+  };
+  let h=`
+  <!-- 街廓 -->
+  <line x1="180" y1="10" x2="180" y2="320" stroke="#3A5D57" stroke-width="30"/>
+  <text class="road-lb" x="180" y="8" text-anchor="middle">2 ST NE — MOTORCYCLE SHOWCASE</text>
+  <line x1="10" y1="42"  x2="350" y2="42"  stroke="#26433E" stroke-width="3"/>
+  <text class="road-lb" x="24" y="37">38TH AVE NE</text>
+  <line x1="10" y1="112" x2="350" y2="112" stroke="#26433E" stroke-width="3"/>
+  <text class="road-lb" x="24" y="107">37TH AVE NE</text>
+  <line x1="10" y1="188" x2="350" y2="188" stroke="#26433E" stroke-width="3"/>
+  <text class="road-lb" x="24" y="183">36TH AVE NE</text>
+  <line x1="10" y1="248" x2="350" y2="248" stroke="#26433E" stroke-width="3"/>
+  <text class="road-lb" x="24" y="243">35TH AVE NE</text>
+  `;
+  if(curDay==="night"){
+    h+=rr("church",56,40,true);
+    h+=rr("mainstage",70,42,true);
+    h+=rr("teamsters",70,42,true);
+    h+=rr("market",64,40,true);
+    h+=rr("foodn",64,40,true);
+    h+=rr("artwalk",56,44,true);
+    h+=rr("citizen",56,44,true);
+    {const V=VENUES.moto,x=V.mx,y=V.my;
+     h+=`<g class="zone" data-v="moto">
+       <rect x="${x-14}" y="${y-70}" width="28" height="140" fill="${V.c}" opacity=".55"/>
+       <text x="${x+30}" y="${y}" text-anchor="middle" transform="rotate(-90 ${x+30} ${y})">${VENUES.moto.lb}</text></g>`;}
+  }else{
+    h+=rr("mainday",70,42,true);
+    h+=rr("kids",70,42,true);
+    h+=rr("vendors",64,40,true);
+    h+=rr("foodd",64,40,true);
+    {const V=VENUES.carshow,x=V.mx,y=V.my;
+     h+=`<g class="zone" data-v="carshow">
+       <rect x="${x-14}" y="${y-70}" width="28" height="140" fill="${V.c}" opacity=".55"/>
+       <text x="${x+30}" y="${y}" text-anchor="middle" transform="rotate(-90 ${x+30} ${y})">${VENUES.carshow.lb}</text></g>`;}
+  }
+  for(const g of GATES){
+    h+=`<text x="${g.mx}" y="${g.my}" text-anchor="middle" font-size="6.5" fill="#5D8579" font-family="Space Grotesk" letter-spacing=".06em" class="lbl-sm">${g.lb}</text>`;
+  }
+  h+=`<g id="friendpins"></g>
+  <g id="gpspin" style="display:none">
+    <circle class="pin-ring" r="14" fill="none" stroke="#F4E8C8" stroke-width="1.5"/>
+    <circle r="5" fill="#F4E8C8" stroke="#1E3835" stroke-width="2"/>
+  </g>`;
+  svg.innerHTML=`<g id="world">${h}</g>`;
+  svg.querySelectorAll(".zone").forEach(g=>g.addEventListener("click",()=>{
+    if(svg._dragged){svg._dragged=false;return}
+    activeVenue=(activeVenue===g.dataset.v)?"all":g.dataset.v;
+    favOnly=false; renderChips(); render(); syncMap();
+  }));
+  initMapZoom();
+  syncMap();
+  renderFriends();
+}
+
+/* ---------- 縮放／平移互動 ---------- */
+function initMapZoom(){
+  const svg=document.getElementById("mapsvg");
+  const world=document.getElementById("world");
+  if(!world)return;
+  let s=1,tx=0,ty=0;
+  const apply=()=>{
+    s=Math.min(4,Math.max(1,s));
+    tx=Math.min(0,Math.max(MAP.W*(1-s),tx));
+    ty=Math.min(0,Math.max(MAP.H*(1-s),ty));
+    world.setAttribute("transform",`translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${s.toFixed(3)})`);
+    svg.classList.toggle("zoomed",s>=1.5);
+  };
+  const toSvg=(cx,cy)=>{const r=svg.getBoundingClientRect();return[(cx-r.left)*MAP.W/r.width,(cy-r.top)*MAP.H/r.height]};
+  svg._zoomInit=false; svg._dragged=false;
+  const pts=new Map(); let last=null,moved=0;
+  svg.onpointerdown=e=>{
+    pts.set(e.pointerId,[e.clientX,e.clientY]);
+    try{svg.setPointerCapture(e.pointerId)}catch(_){}
+    last=null;moved=0;
+  };
+  svg.onpointermove=e=>{
+    if(!pts.has(e.pointerId))return;
+    pts.set(e.pointerId,[e.clientX,e.clientY]);
+    const arr=[...pts.values()];
+    if(arr.length===1){
+      if(last&&!last.d){
+        const[px,py]=toSvg(last[0],last[1]),[qx,qy]=toSvg(arr[0][0],arr[0][1]);
+        tx+=qx-px;ty+=qy-py;moved+=Math.hypot(qx-px,qy-py);apply();
+      }
+      last=arr[0].slice();
+    }else if(arr.length===2){
+      const d=Math.hypot(arr[0][0]-arr[1][0],arr[0][1]-arr[1][1]);
+      const mid=[(arr[0][0]+arr[1][0])/2,(arr[0][1]+arr[1][1])/2];
+      if(last&&last.d){
+        const[mx,my]=toSvg(mid[0],mid[1]);
+        const px=(mx-tx)/s,py=(my-ty)/s;
+        s*=d/last.d;s=Math.min(4,Math.max(1,s));
+        tx=mx-px*s;ty=my-py*s;moved=99;apply();
+      }
+      last={d,mid};
+    }
+  };
+  const up=e=>{pts.delete(e.pointerId);last=null;if(moved>5)svg._dragged=true};
+  svg.onpointerup=up; svg.onpointercancel=up;
+  svg.onwheel=e=>{
+    e.preventDefault();
+    const[mx,my]=toSvg(e.clientX,e.clientY);
+    const px=(mx-tx)/s,py=(my-ty)/s;
+    s*=e.deltaY<0?1.15:0.87;s=Math.min(4,Math.max(1,s));
+    tx=mx-px*s;ty=my-py*s;apply();
+  };
+  svg.ondblclick=()=>{s=1;tx=0;ty=0;apply()};
+  apply();
+}
+function syncMap(){
+  document.querySelectorAll("#mapsvg .zone").forEach(g=>{
+    g.classList.toggle("dim", activeVenue!=="all"&&g.dataset.v!==activeVenue);
+  });
+}
+
+/* ================= GPS ================= */
+let watchId=null, userPos=null;
+const R=6371000, rad=d=>d*Math.PI/180;
+function distM(a,b,c,d){
+  const dLat=rad(c-a), dLng=rad(d-b);
+  const s=Math.sin(dLat/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function proj(lat,lng){
+  const vs=Object.values(VENUES);
+  const latMax=Math.max(...vs.map(v=>v.lat))+0.0006, latMin=Math.min(...vs.map(v=>v.lat))-0.0006;
+  const lngMax=Math.max(...vs.map(v=>v.lng))+0.0006, lngMin=Math.min(...vs.map(v=>v.lng))-0.0006;
+  const x=10+(lng-lngMin)/(lngMax-lngMin)*340;
+  const y=10+(latMax-lat)/(latMax-latMin)*310;
+  return[x,y];
+}
+function onPos(p){
+  userPos={lat:p.coords.latitude,lng:p.coords.longitude};
+  const pin=document.getElementById("gpspin");
+  const note=document.getElementById("mapNote");
+  const d=distM(userPos.lat,userPos.lng,CENTER.lat,CENTER.lng);
+  if(d<500){
+    const[x,y]=proj(userPos.lat,userPos.lng);
+    pin.style.display="";
+    pin.setAttribute("transform",`translate(${x.toFixed(1)},${y.toFixed(1)})`);
+    note.textContent="附近攤位依你的位置即時排序（座標為近似值，誤差約數十公尺）。";
+  }else{
+    pin.style.display="none";
+    note.textContent="你目前在會場範圍外——已依直線距離列出最近的攤位。";
+  }
+  renderNearby(); renderNextUp();
+}
+function onPosErr(err){
+  document.getElementById("mapNote").textContent="無法取得定位（"+(err.code===1?"權限被拒":"訊號不佳")+"）。可直接點色塊瀏覽各場域。";
+  stopWatch();
+}
+function startWatch(){
+  if(!("geolocation" in navigator)){onPosErr({code:0});return}
+  const btn=document.getElementById("locBtn");
+  btn.classList.add("on"); btn.textContent="定位中";
+  watchId=navigator.geolocation.watchPosition(onPos,onPosErr,{enableHighAccuracy:true,maximumAge:15000,timeout:12000});
+}
+function stopWatch(){
+  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
+  userPos=null;
+  const btn=document.getElementById("locBtn");
+  btn.classList.remove("on"); btn.textContent="定位";
+  document.getElementById("gpspin").style.display="none";
+  document.getElementById("nearby").classList.remove("show");
+}
+document.getElementById("locBtn").addEventListener("click",()=>{
+  watchId===null?startWatch():stopWatch();
+});
+
+function venueStatusLine(k,now){
+  const evs=EV.filter(e=>e.v===k&&!e.ad).sort((a,b)=>a.t-b.t);
+  const live=evs.find(e=>now>=e.t&&now<e.t+LIVE_WINDOW);
+  if(live) return {txt:live.n,tag:"live"};
+  const next=evs.find(e=>e.t>now);
+  if(next){const f=fmt(next.t);return {txt:`${f.h} ${f.ap} · ${next.n}`,tag:"next"}}
+  const ad=EV.find(e=>e.v===k&&e.ad);
+  if(ad) return {txt:`全程 · ${ad.n}`,tag:"ad"};
+  return {txt:"今日場次已結束",tag:"done"};
+}
+function renderNearby(){
+  if(!userPos)return;
+  const now=Date.now();
+  const box=document.getElementById("nearby");
+  const list=Object.entries(VENUES).filter(([k,V])=>V.day===curDay)
+    .map(([k,V])=>({k,V,d:distM(userPos.lat,userPos.lng,V.lat,V.lng)}))
+    .sort((a,b)=>a.d-b.d).slice(0,4);
+  box.innerHTML=list.map(({k,V,d})=>{
+    const s=venueStatusLine(k,now);
+    const dTxt=d<950?`${Math.round(d/10)*10} m`:`${(d/1000).toFixed(1)} km`;
+    return `<div class="nb">
+      <div class="nb-l"><span class="dot" style="background:${V.c}"></span>
+        <span class="nb-v">${esc(V.name)}</span>
+        <span class="nb-e">${s.tag==="live"?"▸ ":""}${esc(s.txt)}</span></div>
+      <div class="nb-d">${s.tag==="live"?`<span class="live-t">LIVE</span> · `:""}${dTxt}</div>
+    </div>`;
+  }).join("");
+  box.classList.add("show");
+}
+
+/* ================= FRIENDS ================= */
+const FRIENDS=["Aiden","Becky","Grace","Adam"];
+let myName=null;
+try{myName=localStorage.getItem("t2e-name")}catch(_){}
+let friendLocs=[];
+
+function getOnce(){
+  return new Promise((ok,no)=>{
+    if(userPos)return ok(userPos);
+    if(!("geolocation" in navigator))return no(new Error("no-geo"));
+    navigator.geolocation.getCurrentPosition(
+      p=>ok({lat:p.coords.latitude,lng:p.coords.longitude}),
+      e=>no(e),{enableHighAccuracy:true,timeout:12000,maximumAge:10000});
+  });
+}
+async function announceHere(name){
+  const btn=document.getElementById("hereBtn");
+  btn.disabled=true;btn.textContent="上傳中";
+  try{
+    const pos=await getOnce();
+    const r=await fetch("/api/t2e-here",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({name,lat:pos.lat,lng:pos.lng})});
+    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||r.status)}
+    myName=name;
+    try{localStorage.setItem("t2e-name",name)}catch(_){}
+    document.getElementById("mapNote").textContent=`已標記 ${name} 的位置——朋友的地圖 30 秒內會看到你。`;
+    fetchFriends();
+  }catch(e){
+    document.getElementById("mapNote").textContent=
+      e.message==="db-not-configured"?"後端尚未設定 DATABASE_URL，暫時無法共享定位。"
+      :"定位上傳失敗（"+(e.code===1?"定位權限被拒":"請再試一次")+"）。";
+  }
+  btn.disabled=false;btn.textContent="I'm here";
+}
+function showNamePick(){
+  const box=document.getElementById("namepick");
+  if(box.classList.contains("show")){box.classList.remove("show");return}
+  box.innerHTML=FRIENDS.map(n=>`<button data-n="${n}">${n===myName?"● ":""}${n}</button>`).join("")
+    +`<button class="cancel" data-n="">取消</button>`;
+  box.classList.add("show");
+  box.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    box.classList.remove("show");
+    if(b.dataset.n) announceHere(b.dataset.n);
+  }));
+}
+document.getElementById("hereBtn").addEventListener("click",showNamePick);
+
+async function fetchFriends(){
+  try{
+    const r=await fetch("/api/t2e-here");
+    if(!r.ok)return;
+    const d=await r.json();
+    friendLocs=Array.isArray(d.locs)?d.locs:[];
+    renderFriends();
+  }catch(_){/* 靜默 */}
+}
+function renderFriends(){
+  const layer=document.getElementById("friendpins");
+  if(!layer)return;
+  layer.innerHTML=friendLocs.map(f=>{
+    let[x,y]=proj(f.lat,f.lng);
+    x=Math.min(MAP.W-12,Math.max(12,x)); y=Math.min(MAP.H-16,Math.max(12,y));
+    const mine=f.name===myName;
+    const age=f.age_s>300?` · ${Math.round(f.age_s/60)}'`:"";
+    return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
+      <circle class="fr-ring" r="11" fill="#F4E8C8"/>
+      <circle r="4" fill="#F4E8C8" stroke="#1E3835" stroke-width="1.5"/>
+      <text y="20" text-anchor="middle" font-size="7" font-family="Space Grotesk" letter-spacing=".08em"
+        fill="#F4E8C8"${mine?' font-weight="600"':""}>${f.name.toUpperCase()}${age}</text>
+    </g>`;
+  }).join("");
+}
+fetchFriends();
+
+/* ================= CLOCK ================= */
+function tickClock(){
+  const d=new Date();
+  document.getElementById("clock").textContent=
+    d.toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit",hour12:true});
+}
+
+/* ================= INIT ================= */
+(function initDefaultDay(){
+  const now=Date.now();
+  const nightEnd=dt("night",23,59), dayEnd=dt("day",16,0);
+  if(now>nightEnd && now<=dayEnd) curDay="day";
+})();
+const qEl=document.getElementById("q"), sb=document.getElementById("sb");
+qEl.addEventListener("input",()=>{query=qEl.value;sb.classList.toggle("has-q",!!query);render()});
+document.getElementById("clr").addEventListener("click",()=>{qEl.value="";query="";sb.classList.remove("has-q");render();qEl.focus()});
+renderDayTabs(); renderIntro(); renderChips(); render(); renderMap(); tickClock();
+setInterval(()=>{tickClock();render();renderNearby();renderNextUp();fetchFriends()},30000);
+</script>
+</body>
+</html>
