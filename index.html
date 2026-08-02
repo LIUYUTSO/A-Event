@@ -3,1009 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Stampede · Tuesday, July 7</title>
+<title>活動節目表 · Event Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bevan&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#FAF7F2; --ink:#1A1A1A; --sub:#6B6B6B; --line:#E5DFD5;
-  --card:#FFFFFF;
-  --now:#B3402A;
-  --r:10px;
+  --bg:#15181C; --card:#1E2227; --line:#2C3138; --ink:#F4F1E8; --sub:#9AA0AA;
+  --r:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
   background:var(--bg); color:var(--ink);
   font-family:"Space Grotesk", system-ui, -apple-system, "PingFang TC", sans-serif;
-  min-height:100dvh; padding-bottom:64px;
+  min-height:100dvh;
 }
-button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
-input{font:inherit}
+a{color:inherit;text-decoration:none}
 
-/* ---------- header ---------- */
-header{
-  position:sticky; top:0; z-index:20;
-  background:rgba(250,247,242,.92); backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);
-  padding:14px 20px 0;
-}
-.hd-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.hd-title{font-size:15px;font-weight:600;letter-spacing:.04em}
-.hd-title span{color:var(--now)}
-.hd-clock{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
-.hd-sub{font-size:11px;color:var(--sub);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+header{padding:48px 20px 8px;max-width:760px;margin:0 auto}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub)}
+h1{font-family:"Bevan","Space Grotesk",sans-serif;font-size:30px;line-height:1.25;margin-top:10px;letter-spacing:.01em}
+header p{font-size:13.5px;color:var(--sub);margin-top:10px;line-height:1.7;max-width:52ch}
 
-.searchbar{margin:12px 0 10px;position:relative}
-.searchbar input{
-  width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:999px;
-  background:var(--card);font-size:14px;color:var(--ink);outline:none;
-  transition:border-color .2s ease;
-}
-.searchbar input:focus{border-color:var(--ink)}
-.searchbar input::placeholder{color:#B0AAA0}
-.searchbar .clr{
-  position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:26px;height:26px;border-radius:50%;background:var(--line);
-  font-size:13px;line-height:26px;display:none;
-}
-.searchbar.has-q .clr{display:block}
+main{max-width:760px;margin:0 auto;padding:28px 20px 60px;display:grid;gap:16px}
 
-.chips{
-  display:flex;gap:8px;overflow-x:auto;padding:0 0 12px;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch;
-}
-.chips::-webkit-scrollbar{display:none}
-.chip{
-  flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;
-  border:1px solid var(--line);background:var(--card);color:var(--sub);
-  white-space:nowrap;transition:all .2s ease;display:flex;align-items:center;gap:6px;
-}
-.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--c,#999)}
-.chip.on{background:var(--ink);color:#FAF7F2;border-color:var(--ink)}
-.chip.on .dot{background:var(--c,#999)}
-
-/* ---------- sections ---------- */
-main{padding:0 20px;max-width:720px;margin:0 auto}
-.sec-label{
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);
-  margin:26px 0 10px;display:flex;align-items:center;gap:10px;
-}
-.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
-.sec-label.now-label{color:var(--now)}
-.sec-label.now-label::before{
-  content:"";width:8px;height:8px;border-radius:50%;background:var(--now);
-  animation:pulse 2s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-/* ---------- event card ---------- */
-.ev{
-  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-  padding:13px 15px;margin-bottom:9px;
-  display:grid;grid-template-columns:58px 1fr;gap:14px;align-items:start;
-  border-left:3px solid var(--c,#CCC);
-  transition:transform .2s ease, box-shadow .2s ease;
+.card{
+  position:relative;overflow:hidden;border-radius:var(--r);border:1px solid var(--line);
+  background:var(--c-bg,var(--card)); color:var(--c-ink,var(--ink));
+  padding:22px 22px 24px;display:block;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 @media(hover:hover){
-  .ev:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,26,26,.06)}
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.35);border-color:var(--c-accent,var(--line))}
 }
-.ev-time{
-  font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25;
+.card:active{transform:translateY(-1px)}
+.card::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--c-accent,transparent);
 }
-.ev-time small{display:block;font-size:10px;font-weight:400;color:var(--sub);letter-spacing:.06em}
-.ev-name{font-size:14.5px;font-weight:500;line-height:1.4}
-.ev-venue{font-size:11.5px;color:var(--sub);margin-top:3px;letter-spacing:.03em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ev-venue .dot{width:6px;height:6px;border-radius:50%;background:var(--c,#999);flex:0 0 auto}
-.badge{
-  display:inline-block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
-  padding:2px 7px;border-radius:999px;font-weight:600;
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card-tag{
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  padding:4px 10px;border-radius:999px;background:var(--c-accent,#555);color:var(--c-accent-ink,#fff);
+  white-space:nowrap;
 }
-.badge.tk{background:#8C2F1B;color:#FAF7F2}
-.badge.live{background:var(--now);color:#FAF7F2}
-.badge.soon{background:#EFE8DC;color:#8A6B3A}
-.badge.done{background:var(--line);color:var(--sub)}
-.ev.is-done{opacity:.45}
-.ev.is-live{border-color:var(--now);border-left-color:var(--now)}
+.card-name{font-family:"Bevan","Space Grotesk",sans-serif;font-size:24px;margin-top:14px;letter-spacing:.01em}
+.card-when{font-size:12.5px;color:var(--c-sub,var(--sub));margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.card-desc{font-size:12.5px;color:var(--c-sub,var(--sub));margin-top:12px;line-height:1.7}
+.card-go{
+  display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;font-weight:600;
+  letter-spacing:.04em;color:var(--c-accent,var(--ink));
+}
+.card-go .arr{transition:transform .2s ease}
+.card:hover .card-go .arr{transform:translateX(3px)}
 
-/* hour group */
-.hour-group{margin-bottom:4px}
-.hour-tag{
-  font-size:12px;font-weight:600;color:var(--sub);font-variant-numeric:tabular-nums;
-  margin:16px 0 8px;letter-spacing:.06em;
-}
+.stampede{--c-bg:#FAF7F2; --c-ink:#1A1A1A; --c-sub:#6B6B6B; --c-accent:#B3402A; --c-accent-ink:#FAF7F2}
+.t2e{--c-bg:#1E3835; --c-ink:#F4E8C8; --c-sub:#9BC0B5; --c-accent:#E1573C; --c-accent-ink:#2A1610}
 
-/* all-day */
-details.allday{margin-top:8px}
-details.allday summary{
-  list-style:none;font-size:12.5px;color:var(--sub);padding:11px 15px;
-  border:1px dashed var(--line);border-radius:var(--r);
-  display:flex;justify-content:space-between;align-items:center;
+.soon{
+  border-style:dashed; display:flex; align-items:center; justify-content:center;
+  color:var(--sub); font-size:12.5px; padding:32px 22px; cursor:default;
 }
-details.allday summary::-webkit-details-marker{display:none}
-details.allday summary .tw{transition:transform .2s ease;font-size:11px}
-details.allday[open] summary .tw{transform:rotate(90deg)}
-details.allday .ev{grid-template-columns:1fr}
-.ad-hours{font-size:11px;color:var(--sub);font-variant-numeric:tabular-nums}
+@media(hover:hover){.soon:hover{transform:none;box-shadow:none;border-color:var(--line)}}
 
-/* empty */
-.empty{
-  text-align:center;padding:56px 20px;color:var(--sub);font-size:13.5px;line-height:1.8;
-}
-.empty b{display:block;font-size:15px;color:var(--ink);font-weight:500;margin-bottom:4px}
-
-footer{
-  max-width:720px;margin:36px auto 0;padding:16px 20px 0;border-top:1px solid var(--line);
-  font-size:10.5px;color:var(--sub);line-height:1.8;letter-spacing:.03em;
-}
-
-/* ---------- next-up banner ---------- */
-.nextup{max-width:720px;margin:14px auto 0;padding:0 20px;display:none}
-.nextup.show{display:block}
-.nu-card{
-  background:var(--ink);color:#FAF7F2;border-radius:var(--r);
-  padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;
-}
-.nu-l{min-width:0}
-.nu-tag{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.55}
-.nu-name{font-size:14.5px;font-weight:600;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nu-meta{font-size:11.5px;opacity:.7;margin-top:2px}
-.nu-r{text-align:right;flex:0 0 auto;font-variant-numeric:tabular-nums}
-.nu-count{font-size:19px;font-weight:600;line-height:1.1}
-.nu-count small{font-size:10px;font-weight:400;opacity:.6;display:block;letter-spacing:.08em}
-
-/* ---------- star ---------- */
-.ev{grid-template-columns:58px 1fr 30px}
-.star{
-  width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;
-  color:#C9C2B6;transition:color .2s ease, transform .2s ease;align-self:center;
-}
-.star:active{transform:scale(.85)}
-.star.on{color:#B3402A}
-details.allday .ev{grid-template-columns:1fr 30px}
-.chip.fav-chip.on{background:var(--now);border-color:var(--now)}
-
-/* ---------- map ---------- */
-.mapsec{margin:16px 0 0;padding:0}
-.map-head{display:flex;justify-content:space-between;align-items:center;margin:0 auto 8px;padding:0 20px;max-width:720px}
-.map-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
-.locate{
-  font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;
-  border:1px solid var(--ink);color:var(--ink);transition:all .2s ease;
-}
-.locate.on{background:var(--ink);color:#FAF7F2}
-.locate:disabled{opacity:.4}
-.here-btn{
-  font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;
-  background:var(--ink);color:#FAF7F2;transition:opacity .2s ease;
-}
-.here-btn:disabled{opacity:.4}
-.namepick{
-  display:none;gap:8px;margin:0 auto 10px;padding:0 20px;max-width:720px;flex-wrap:wrap;
-}
-.namepick.show{display:flex}
-.namepick button{
-  padding:8px 16px;border-radius:999px;border:1px solid var(--ink);
-  font-size:13px;letter-spacing:.04em;transition:all .15s ease;
-}
-.namepick button:active{background:var(--ink);color:#FAF7F2}
-.namepick .cancel{border-color:var(--line);color:var(--sub)}
-.fr-ring{animation:breathe 2.4s ease-in-out infinite}
-@keyframes breathe{0%,100%{opacity:.12}50%{opacity:.55}}
-.mapbox{background:transparent}
-.mapbox svg{display:block;width:100%;height:auto}
-.zone{cursor:pointer;transition:opacity .2s ease}
-.zone rect{rx:3}
-.zone text{
-  font-family:"Space Grotesk",system-ui,sans-serif;font-size:7.5px;letter-spacing:.04em;
-  fill:#1A1A1A;pointer-events:none;
-}
-.zone.dim{opacity:.22}
-#mapsvg{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
-#mapsvg:active{cursor:grabbing}
-#mapsvg .lbl-sm{display:none}
-#mapsvg.zoomed .lbl-sm{display:block}
-.road-lb{font-size:6px;fill:#B4AA98;letter-spacing:.12em;font-family:"Space Grotesk"}
-#gpspin{transition:transform .8s ease}
-.pin-ring{animation:ring 2.4s ease-out infinite;transform-origin:center}
-@keyframes ring{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
-.map-note{font-size:10.5px;color:var(--sub);margin:6px auto 0;padding:0 20px;max-width:720px;line-height:1.6}
-.nearby{margin:12px auto 0;padding:0 20px;max-width:720px;display:none}
-.nearby.show{display:block}
-.nb{
-  display:flex;justify-content:space-between;align-items:baseline;gap:12px;
-  padding:10px 2px;border-bottom:1px solid var(--line);font-size:13px;
-}
-.nb:last-child{border-bottom:none}
-.nb-l{display:flex;align-items:center;gap:8px;min-width:0}
-.nb-l .dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
-.nb-v{font-weight:500;white-space:nowrap}
-.nb-e{color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nb-d{font-size:11.5px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
-.nb-d .live-t{color:var(--now);font-weight:600}
-
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-}
+footer{max-width:760px;margin:0 auto;padding:0 20px 40px;font-size:10.5px;color:var(--sub);line-height:1.8}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="hd-top">
-    <div class="hd-title">TUESDAY, JULY <span>7</span></div>
-    <div class="hd-clock" id="clock">--:--</div>
-  </div>
-  <div class="hd-sub">Calgary Stampede · Park open 10 a.m. – midnight</div>
-  <div class="searchbar" id="sb">
-    <input id="q" type="search" placeholder="搜尋：馬術、摩托車、狗、deadmau5⋯" autocomplete="off">
-    <button class="clr" id="clr" aria-label="清除">✕</button>
-  </div>
-  <div class="chips" id="chips"></div>
+  <div class="eyebrow">Event Guide · 活動入口</div>
+  <h1>選一個活動，看即時節目表</h1>
+  <p>搜尋活動、篩選場地、點地圖找攤位、收藏想去的場次——每個活動都有自己的一頁。之後有新活動，也會加進這裡。</p>
 </header>
 
-<div class="nextup" id="nextup"></div>
-
-<section class="mapsec">
-  <div class="map-head">
-    <div class="map-title">Park Map · 點色塊篩選 · 雙指縮放</div>
-    <div style="display:flex;gap:8px">
-      <button class="here-btn" id="hereBtn">I'm here</button>
-      <button class="locate" id="locBtn">定位</button>
-    </div>
-  </div>
-  <div class="namepick" id="namepick"></div>
-  <div class="mapbox"><svg id="mapsvg" viewBox="0 0 360 330" role="img" aria-label="園區示意地圖"></svg></div>
-  <div class="map-note" id="mapNote">場域位置為示意配置（非精準比例）。按「定位」後以你的 GPS 顯示附近活動。</div>
-  <div class="nearby" id="nearby"></div>
-</section>
-
-<main id="main"></main>
+<main id="cards"></main>
 
 <footer>
-  資料轉錄自 7/7 園區紙本節目表，細小字體可能有誤——以官方 App 為準。<br>
-  時間依你的裝置時鐘自動判斷「進行中／即將開始」。
+  各活動頁面的資料整理自主辦單位公告的節目表／海報，細節請以官方公告為準。
 </footer>
 
 <script>
-/* ================= DATA ================= */
-/* t = 開始時間（分鐘，凌晨跨日 >1440）；tk = ticketed */
-const VENUES = {
-  gmc:   {name:"GMC Stadium",              c:"#8C2F1B", lat:51.0341, lng:-114.0546, mx:112, my:251, lb:"GMC STADIUM"},
-  wec:   {name:"Nutrien Western Event Ctr",c:"#5A7A4A", lat:51.0355, lng:-114.0534, mx:132, my:191, lb:"NUTRIEN WEC"},
-  ag:    {name:"Agriculture Zone",         c:"#8FA878", lat:51.0360, lng:-114.0522, mx:170, my:179, lb:"AG BUILDING"},
-  dome:  {name:"Scotiabank Saddledome",    c:"#6E6E74", lat:51.0374, lng:-114.0519, mx:204, my:129, lb:"SADDLEDOME"},
-  nash:  {name:"Nashville North",          c:"#A98B5F", lat:51.0348, lng:-114.0541, mx:104, my:211, lb:"NASHVILLE N"},
-  big4:  {name:"Big Four Roadhouse",       c:"#4E8C7E", lat:51.0362, lng:-114.0570, mx:42,  my:176, lb:"BIG FOUR"},
-  coke:  {name:"Coca-Cola Stage",          c:"#C2543B", lat:51.0338, lng:-114.0575, mx:48,  my:254, lb:"COCA-COLA"},
-  oasis: {name:"Western Oasis",            c:"#4A6FA0", lat:51.0399, lng:-114.0587, mx:78,  my:100, lb:"OASIS"},
-  taste: {name:"Taste of Stampede",        c:"#3E618F", lat:51.0400, lng:-114.0570, mx:122, my:94,  lb:"TASTE"},
-  bmo:   {name:"BMO Centre / Market",      c:"#35547E", lat:51.0396, lng:-114.0576, mx:110, my:126, lb:"BMO CENTRE"},
-  plaza: {name:"BMO Plaza / Staircase",    c:"#5E82AE", lat:51.0387, lng:-114.0557, mx:158, my:138, lb:"PLAZA"},
-  elbow: {name:"Elbow River Camp",         c:"#C77B3A", lat:51.0386, lng:-114.0470, mx:322, my:114, lb:"ELBOW RIVER CAMP"},
-  comp:  {name:"The Compound",             c:"#3C4A48", lat:51.0375, lng:-114.0498, mx:250, my:140, lb:"COMPOUND"},
-  dog:   {name:"Dog Bowl",                 c:"#4A6A50", lat:51.0328, lng:-114.0520, mx:164, my:308, lb:"DOG BOWL"},
-  kids:  {name:"Kids' Midway",             c:"#C9A63C", lat:51.0367, lng:-114.0495, mx:242, my:176, lb:"KIDS' MIDWAY"},
-};
-const m=(h,mi=0)=>h*60+mi;
-const EV=[
- // GMC Stadium
- {n:"Stampede Rodeo",v:"gmc",t:m(13,30),tk:1},
- {n:"Evening Show",v:"gmc",t:m(19,15),tk:1},
- // Nutrien WEC / Northern Lights Arena
- {n:"Draft Horse Demo",v:"wec",t:m(10,15)},
- {n:"World Stock Dog Championship",v:"wec",t:m(10,15)},
- {n:"Horse Haven Equine Showcases",v:"wec",t:m(11,15)},
- {n:"Stampede Showriders",v:"wec",t:m(12,30)},
- {n:"Draft Horse Demo",v:"wec",t:m(13,15)},
- {n:"Horse Haven Equine Showcases",v:"wec",t:m(14,15)},
- {n:"Draft Horse Demo",v:"wec",t:m(15,30)},
- {n:"Stampede Showriders",v:"wec",t:m(16,0)},
- {n:"Horse Haven Equine Showcases",v:"wec",t:m(16,30)},
- {n:"The Charms",v:"wec",t:m(16,30)},
- {n:"Reining Showcase",v:"wec",t:m(18,30)},
- {n:"Reining Showcase",v:"wec",t:m(19,0)},
- // Agriculture Zone — all day
- {n:"Agriculture Showcases",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Nutrien Ag-tivity in the City",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Cattle Trail",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Born to Buck™",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Sheep & Pork Showcases",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Country Critters · Milky Way Dairy Demos (Ag Barn)",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Horse Haven (Ag Barn)",v:"ag",ad:"10 a.m. – 9 p.m."},
- {n:"Draft Horse Town · Blacksmiths · Farm Equipment",v:"ag",ad:"10 a.m. – 9 p.m."},
- // Saddledome
- {n:"Calgary Stampede Powwow",v:"dome",t:m(12,30)},
- // Nashville North
- {n:"Devin Cooper",v:"nash",t:m(16,0)},
- {n:"Devin Cooper",v:"nash",t:m(17,0)},
- {n:"Morgan Klaiber",v:"nash",t:m(18,0)},
- {n:"Morgan Klaiber",v:"nash",t:m(19,0)},
- {n:"Zach McPhee",v:"nash",t:m(20,45)},
- {n:"ERNEST",v:"nash",t:m(22,15)},
- {n:"Foxx Worthee",v:"nash",t:m(24,15)},
- {n:"Foxx Worthee",v:"nash",t:m(25,15)},
- // Big Four Roadhouse
- {n:"The Range Food Hall & 8-Bit Roundup Arcade",v:"big4",ad:"11 a.m. – 11 p.m."},
- {n:"Battle of the Bulls",v:"big4",ad:"12 p.m. – 1 a.m."},
- {n:"Bar Nineteen Twelve",v:"big4",ad:"5 – 10 p.m."},
- {n:"Kate & The Comets",v:"big4",t:m(16,0)},
- {n:"Kate & The Comets",v:"big4",t:m(17,15)},
- {n:"Kate & The Comets",v:"big4",t:m(18,30)},
- {n:"The Marshall Tucker Band",v:"big4",t:m(21,0)},
- // Coca-Cola Stage
- {n:"Gatano",v:"coke",t:m(20,0)},
- {n:"deadmau5",v:"coke",t:m(21,30)},
- // Western Oasis
- {n:"Live Sand Sculpting",v:"oasis",ad:"11 a.m. – 10 p.m."},
- {n:"WOW Stage: Harmonica Tableau",v:"oasis",t:m(12,0)},
- {n:"WOW Stage: Karen Mills",v:"oasis",t:m(13,0)},
- {n:"WOW Stage: Sandra Sutter & Rust",v:"oasis",t:m(14,0)},
- {n:"WOW Stage: Stampede City Mixed Chorus",v:"oasis",t:m(15,0)},
- {n:"WOW Stage: Pure Country",v:"oasis",t:m(16,0)},
- {n:"WOW Stage: Charlie Ewing & Mike Dygert",v:"oasis",t:m(17,0)},
- {n:"WOW Stage: Buddy Elliott",v:"oasis",t:m(18,0)},
- // Taste of Stampede
- {n:"Cooking Demo: Safeway",v:"taste",t:m(11,0)},
- {n:"International Cuisine Demo: Roy Oh（Roy's Korean Kitchen）",v:"taste",t:m(12,0)},
- {n:"Culinary Cup — Calgary Chefs",v:"taste",t:m(13,15)},
- {n:"Specialty Chef Demonstration",v:"taste",t:m(15,15)},
- {n:"International Cooking Demo: Nepalese Cuisine",v:"taste",t:m(17,15)},
- {n:"Taste of Stampede",v:"taste",t:m(19,0),tk:1},
- // BMO Centre / Market / Stage of Wonders
- {n:"Market Vendors · BMO Community Square",v:"bmo",ad:"12 – 9 p.m."},
- {n:"GlobalFest Performance",v:"bmo",t:m(12,0)},
- {n:"Community Stage: Calgary Public Library",v:"bmo",t:m(12,30)},
- {n:"On Air!（Stage of Wonders）",v:"bmo",t:m(12,30)},
- {n:"Midway Melodies Karaoke",v:"bmo",t:m(13,0)},
- {n:"GlobalFest Performance",v:"bmo",t:m(14,0)},
- {n:"On Air!（Stage of Wonders）",v:"bmo",t:m(14,15)},
- {n:"Calgary Public Library",v:"bmo",t:m(14,30)},
- {n:"Showband Clarinet Ensemble",v:"bmo",t:m(15,0)},
- {n:"Line Dancing Lesson",v:"bmo",t:m(15,15)},
- {n:"GlobalFest Performance",v:"bmo",t:m(16,45)},
- {n:"On Air!（Stage of Wonders）",v:"bmo",t:m(16,45)},
- {n:"Midway Melodies Karaoke",v:"bmo",t:m(17,15)},
- {n:"Line Dancing Lesson",v:"bmo",t:m(17,45)},
- {n:"GlobalFest Performance",v:"bmo",t:m(18,15)},
- {n:"On Air!（Stage of Wonders）",v:"bmo",t:m(18,30)},
- {n:"Midway Melodies Karaoke",v:"bmo",t:m(18,45)},
- {n:"GlobalFest Performance",v:"bmo",t:m(19,30)},
- {n:"Midway Melodies Karaoke",v:"bmo",t:m(20,0)},
- // BMO Plaza / Grand Staircase
- {n:"Guest Band Performance",v:"plaza",t:m(10,45)},
- {n:"High Dive Show",v:"plaza",t:m(13,0)},
- {n:"Acoustic Act: Danny Nix",v:"plaza",t:m(13,45)},
- {n:"Stampede Showband",v:"plaza",t:m(14,0)},
- {n:"High Dive Show",v:"plaza",t:m(14,20)},
- {n:"Acoustic Act: Danny Nix",v:"plaza",t:m(15,0)},
- {n:"Guest Band Performance",v:"plaza",t:m(15,50)},
- {n:"Acoustic Act: Danny Nix",v:"plaza",t:m(16,15)},
- {n:"High Dive Show",v:"plaza",t:m(16,30)},
- {n:"Dueling Pianos",v:"plaza",t:m(17,30)},
- {n:"The Grand Staircase Show feat. Stampede Showband",v:"plaza",t:m(18,0)},
- {n:"Dueling Pianos",v:"plaza",t:m(19,15)},
- {n:"Band of Outriders",v:"plaza",t:m(19,45)},
- {n:"The Grand Staircase Show feat. Stampede Showband",v:"plaza",t:m(20,30)},
- {n:"Dueling Pianos",v:"plaza",t:m(21,0)},
- // Elbow River Camp
- {n:"Tipi Viewing",v:"elbow",ad:"11 a.m. – 7 p.m."},
- {n:"Interpretive Programs · Vendors · Bannock Booth · Council Tipi",v:"elbow",ad:"11 a.m. – 9 p.m."},
- {n:"Flag Raising",v:"elbow",t:m(11,30)},
- {n:"Camp Riders",v:"elbow",t:m(11,45)},
- {n:"Horse Culture",v:"elbow",t:m(12,30)},
- {n:"Traditional Games",v:"elbow",t:m(13,0)},
- {n:"Interpretive Tour",v:"elbow",t:m(14,0)},
- {n:"Piikani / Kainai Nation Day",v:"elbow",t:m(15,0)},
- {n:"Interpretive Tour",v:"elbow",t:m(17,0)},
- {n:"Sharing Our Culture",v:"elbow",t:m(18,0)},
- {n:"Flag Lowering",v:"elbow",t:m(19,0)},
- // Compound
- {n:"Freestyle Motocross",v:"comp",t:m(12,0)},
- {n:"Freestyle Motocross",v:"comp",t:m(14,30)},
- {n:"Freestyle Motocross",v:"comp",t:m(17,0)},
- {n:"Freestyle Motocross",v:"comp",t:m(19,0)},
- // Dog Bowl
- {n:"Full Throttle",v:"dog",t:m(10,30)},
- {n:"Full Throttle",v:"dog",t:m(12,30)},
- {n:"Full Throttle",v:"dog",t:m(15,0)},
- {n:"Full Throttle",v:"dog",t:m(17,30)},
- {n:"Full Throttle",v:"dog",t:m(19,30)},
- // Kids' Midway
- {n:"Canadian Armed Forces Displays",v:"kids",ad:"11 a.m. – 10 p.m."},
- {n:"PAW Patrol: Dino Rescue!",v:"kids",t:m(11,15)},
- {n:"Little Rodeo Pro",v:"kids",t:m(12,0)},
- {n:"PAW Patrol Meet & Greet",v:"kids",t:m(12,10)},
- {n:"Team T&J: Kids' Dino Stompin' Jamboree",v:"kids",t:m(12,30)},
- {n:"Bubble Playshop",v:"kids",t:m(13,30)},
- {n:"Little Rodeo Pro",v:"kids",t:m(13,30)},
- {n:"Gabby's Dollhouse Dance Party",v:"kids",t:m(14,0)},
- {n:"Little Rodeo Pro",v:"kids",t:m(15,0)},
- {n:"Gabby's Dollhouse Meet & Greet",v:"kids",t:m(15,20)},
- {n:"PAW Patrol: Dino Rescue!",v:"kids",t:m(16,0)},
- {n:"PAW Patrol Meet & Greet",v:"kids",t:m(17,0)},
- {n:"Bubble Playshop",v:"kids",t:m(17,20)},
- {n:"Gabby's Dollhouse Dance Party",v:"kids",t:m(18,0)},
- {n:"Team T&J: Kids' Dino Stompin' Jamboree",v:"kids",t:m(19,0)},
+const EVENTS=[
+  {
+    key:"stampede", cls:"stampede", tag:"Jul 7",
+    name:"Calgary Stampede",
+    when:"Tuesday, July 7 · Park open 10 a.m. – midnight",
+    desc:"牛仔競技、馬術表演、演唱會、市集與美食——整座園區的全日節目表，含即時定位地圖。",
+    href:"/stampede.html",
+  },
+  {
+    key:"t2e", cls:"t2e", tag:"Aug 1–2",
+    name:"T2E Fest 2026",
+    when:"Night Shift · Sat Aug 1, 6–11pm　·　Day Fest · Sun Aug 2, 10am–4pm",
+    desc:"Greenview Industrial 的機車特技、樂團演出、月光市集、改裝車展與親子活動，分 Night Shift / Day Fest 兩個節目表。",
+    href:"/t2e.html",
+  },
 ];
-
-/* ============ 中文模糊標籤 ============ */
-/* 依場地給基礎標籤，再依活動名稱疊加關鍵字 */
-const VZH={
-  gmc:"牛仔競技 圈地賽 晚間秀 主場館",
-  wec:"馬術 馬 西部 牧羊犬 表演",
-  ag:"農業 動物 農場 牛 羊 豬 鐵匠 親子",
-  dome:"原住民 帕瓦 舞蹈 冰球館",
-  nash:"音樂 現場演出 鄉村 酒吧 夜店",
-  big4:"音樂 酒吧 美食 遊戲機 機械牛",
-  coke:"音樂 演唱會 主舞台 電音",
-  oasis:"藝術 沙雕 音樂 酒 展覽",
-  taste:"美食 烹飪 料理 廚師 試吃",
-  bmo:"市集 卡拉OK 排舞 表演 購物",
-  plaza:"跳水 樂隊 鋼琴 音樂 表演",
-  elbow:"原住民 帳篷 文化 導覽 傳統",
-  comp:"摩托車 越野 特技 極限運動",
-  dog:"狗 犬 寵物 特技 表演",
-  kids:"兒童 親子",
-};
-const NZH=[
- [/rodeo/i,"牛仔競技 圈地賽"],
- [/horse|equine|reining|showriders/i,"馬術 馬"],
- [/stock dog/i,"牧羊犬 狗 犬"],
- [/motocross/i,"摩托車 越野 特技"],
- [/full throttle/i,"狗 犬 敏捷 飛盤"],
- [/powwow/i,"原住民 帕瓦 舞蹈"],
- [/dive/i,"跳水 高空"],
- [/piano/i,"鋼琴 音樂"],
- [/karaoke/i,"卡拉OK 唱歌"],
- [/line dancing/i,"排舞 跳舞 教學"],
- [/cooking|cuisine|chef|culinary/i,"烹飪 料理 美食 廚師"],
- [/sand sculpt/i,"沙雕 藝術"],
- [/paw patrol/i,"汪汪隊 卡通 兒童"],
- [/gabby/i,"蓋比 娃娃屋 卡通"],
- [/dino/i,"恐龍 兒童"],
- [/bubble/i,"泡泡 兒童"],
- [/tipi|flag|interpretive|culture|kainai|piikani|camp riders|traditional/i,"原住民 文化 傳統"],
- [/showband|band|acoustic|chorus|wow stage|comets|marshall|deadmau5|gatano|ernest|mcphee|klaiber|cooper|worthee|charms/i,"音樂 現場演出"],
- [/deadmau5/i,"電音 DJ"],
- [/armed forces/i,"軍事 展示"],
- [/battle of the bulls/i,"機械牛 挑戰"],
- [/market|vendors/i,"市集 購物"],
-];
-for(const e of EV){
-  let z=VZH[e.v]||"";
-  for(const[re,t]of NZH) if(re.test(e.n)) z+=" "+t;
-  e.zh=z;
-}
-
-EV.forEach((e,i)=>e.id=i);
-
-/* ================= STATE ================= */
-let activeVenue="all", query="", favOnly=false;
-let favs=new Set();
-const store={
-  get(){try{const r=localStorage.getItem("stampede-favs-0707");return r?JSON.parse(r):[]}catch(_){return[]}},
-  set(a){try{localStorage.setItem("stampede-favs-0707",JSON.stringify(a))}catch(_){/* 私密模式等情況：僅存記憶體 */}}
-};
-favs=new Set(store.get());
-/* ---- 後端同步（Neon via /api/favs；未設定 DATABASE_URL 時靜默降級為純本機） ---- */
-const deviceId=(()=>{try{
-  let d=localStorage.getItem("stampede-device");
-  if(!d){d=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));localStorage.setItem("stampede-device",d)}
-  return d;
-}catch(_){return "mem-"+Math.random().toString(36).slice(2)}})();
-let syncTimer=null;
-function pushFavs(){
-  clearTimeout(syncTimer);
-  syncTimer=setTimeout(()=>{
-    fetch(`/api/favs?device=${encodeURIComponent(deviceId)}`,{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({favs:[...favs]})
-    }).catch(()=>{/* 離線或後端未設定：本機仍完整可用 */});
-  },800);
-}
-async function pullFavs(){
-  try{
-    const r=await fetch(`/api/favs?device=${encodeURIComponent(deviceId)}`);
-    if(!r.ok)return;
-    const d=await r.json();
-    if(Array.isArray(d.favs)&&d.favs.length){
-      const before=favs.size;
-      d.favs.forEach(id=>favs.add(id));
-      store.set([...favs]);
-      if(favs.size!==before){renderChips();render()}
-    }
-  }catch(_){/* 靜默 */}
-}
-pullFavs();
-function toggleFav(id){
-  favs.has(id)?favs.delete(id):favs.add(id);
-  store.set([...favs]);
-  pushFavs();
-  render(); renderNextUp();
-}
-const LIVE_WINDOW=45;   // 開始後 45 分鐘內視為進行中
-const SOON_WINDOW=60;   // 60 分鐘內開始視為即將開始
-
-/* ================= HELPERS ================= */
-function nowMin(){
-  const d=new Date();
-  let mm=d.getHours()*60+d.getMinutes();
-  if(d.getHours()<4) mm+=1440; // 凌晨視為前一天深夜
-  return mm;
-}
-function fmt(t){
-  const h24=Math.floor(t/60)%24, mi=t%60;
-  const ap=(t>=720&&t<1440)?"PM":(t>=1440?"AM":"AM");
-  let h=h24%12; if(h===0)h=12;
-  return {h:`${h}:${String(mi).padStart(2,"0")}`, ap:(t>=1440?"翌日 AM":ap)};
-}
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
-
-/* ================= RENDER ================= */
-function evCard(e,status){
-  const V=VENUES[e.v];
-  const f=e.ad?null:fmt(e.t);
-  let badge="";
-  if(e.tk) badge+=`<span class="badge tk">Ticketed</span>`;
-  if(status==="live") badge+=`<span class="badge live">進行中</span>`;
-  else if(status==="soon") badge+=`<span class="badge soon">即將開始</span>`;
-  const cls=`ev${status==="done"?" is-done":""}${status==="live"?" is-live":""}`;
-  const timeCol=e.ad
-    ? `<div class="ev-time" style="font-size:12px;font-weight:500">ALL<br>DAY</div>`
-    : `<div class="ev-time">${f.h}<small>${f.ap}</small></div>`;
-  const on=favs.has(e.id);
-  return `<div class="${cls}" style="--c:${V.c}">
-    ${timeCol}
-    <div>
-      <div class="ev-name">${esc(e.n)}</div>
-      <div class="ev-venue"><span class="dot"></span>${esc(V.name)}${e.ad?` <span class="ad-hours">· ${e.ad}</span>`:""} ${badge}</div>
+document.getElementById("cards").innerHTML = EVENTS.map(e=>`
+  <a class="card ${e.cls}" href="${e.href}">
+    <div class="card-top">
+      <div class="card-tag">${esc(e.tag)}</div>
     </div>
-    <button class="star${on?" on":""}" data-fav="${e.id}" aria-label="${on?"移出想去":"加入想去"}">${on?"♥":"♡"}</button>
-  </div>`;
-}
-
-function statusOf(e,now){
-  if(e.ad) return "ad";
-  if(now>=e.t && now<e.t+LIVE_WINDOW) return "live";
-  if(e.t>now && e.t<=now+SOON_WINDOW) return "soon";
-  if(e.t+LIVE_WINDOW<=now) return "done";
-  return "later";
-}
-
-function render(){
-  const now=nowMin();
-  const tokens=query.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const match=e=>{
-    if(favOnly&&!favs.has(e.id))return false;
-    if(activeVenue!=="all"&&e.v!==activeVenue)return false;
-    if(tokens.length){
-      const hay=(e.n+" "+VENUES[e.v].name+" "+e.zh).toLowerCase();
-      // 每個詞都需命中（AND），中英混搜皆可
-      for(const t of tokens) if(!hay.includes(t)) return false;
-    }
-    return true;
-  };
-  const timed=EV.filter(e=>!e.ad&&match(e)).sort((a,b)=>a.t-b.t);
-  const alldays=EV.filter(e=>e.ad&&match(e));
-
-  const live=timed.filter(e=>statusOf(e,now)==="live");
-  const soon=timed.filter(e=>statusOf(e,now)==="soon");
-  const rest=timed.filter(e=>{const s=statusOf(e,now);return s!=="live"&&s!=="soon"});
-
-  let html="";
-  if(live.length){
-    html+=`<div class="sec-label now-label">現在進行中</div>`;
-    html+=live.map(e=>evCard(e,"live")).join("");
-  }
-  if(soon.length){
-    html+=`<div class="sec-label">60 分鐘內開始</div>`;
-    html+=soon.map(e=>evCard(e,"soon")).join("");
-  }
-  if(rest.length){
-    html+=`<div class="sec-label">全日時間表</div>`;
-    let lastHour=-1;
-    for(const e of rest){
-      const h=Math.floor(e.t/60);
-      if(h!==lastHour){
-        lastHour=h;
-        const f=fmt(h*60);
-        html+=`<div class="hour-tag">${f.h.split(":")[0]} ${f.ap}</div>`;
-      }
-      html+=evCard(e,statusOf(e,now));
-    }
-  }
-  if(alldays.length){
-    html+=`<details class="allday"${(tokens.length||activeVenue!=="all"||favOnly)?" open":""}>
-      <summary>全天開放（${alldays.length}）<span class="tw">▸</span></summary>
-      <div style="margin-top:9px">${alldays.map(e=>evCard(e,"ad")).join("")}</div>
-    </details>`;
-  }
-  if(!html){
-    html=favOnly
-      ?`<div class="empty"><b>還沒有想去的活動</b>點卡片右側的 ♡ 加入，這裡會依時間排好。</div>`
-      :`<div class="empty"><b>沒有符合的活動</b>換個關鍵字，或把場地篩選切回「全部」。</div>`;
-  }
-  const mainEl=document.getElementById("main");
-  mainEl.innerHTML=html;
-  mainEl.querySelectorAll("[data-fav]").forEach(b=>b.addEventListener("click",ev=>{
-    ev.stopPropagation(); toggleFav(+b.dataset.fav);
-  }));
-  renderNextUp();
-}
-
-/* ================= NEXT UP ================= */
-function renderNextUp(){
-  const box=document.getElementById("nextup");
-  const now=nowMin();
-  const upcoming=EV.filter(e=>favs.has(e.id)&&!e.ad&&e.t+LIVE_WINDOW>now).sort((a,b)=>a.t-b.t);
-  if(!upcoming.length){box.classList.remove("show");box.innerHTML="";return}
-  const e=upcoming[0], V=VENUES[e.v], f=fmt(e.t);
-  const diff=e.t-now;
-  let count, unit;
-  if(diff<=0){count="LIVE";unit="進行中"}
-  else if(diff<60){count=diff;unit="分鐘後"}
-  else{count=`${Math.floor(diff/60)}:${String(diff%60).padStart(2,"0")}`;unit="小時後"}
-  let walk="";
-  if(userPos){
-    const d=distM(userPos.lat,userPos.lng,V.lat,V.lng);
-    walk=` · 距離 ${d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km"}，步行約 ${Math.max(1,Math.round(d/80))} 分`;
-  }
-  box.innerHTML=`<div class="nu-card">
-    <div class="nu-l">
-      <div class="nu-tag">下一站${upcoming.length>1?` · 之後還有 ${upcoming.length-1} 個`:""}</div>
-      <div class="nu-name">${esc(e.n)}</div>
-      <div class="nu-meta">${f.h} ${f.ap} · ${esc(V.name)}${walk}</div>
-    </div>
-    <div class="nu-r"><div class="nu-count">${count}<small>${unit}</small></div></div>
-  </div>`;
-  box.classList.add("show");
-}
-
-/* ================= CHIPS ================= */
-function renderChips(){
-  const el=document.getElementById("chips");
-  let h=`<button class="chip fav-chip${favOnly?" on":""}" data-fav-chip>♥ 想去${favs.size?` ${favs.size}`:""}</button>`;
-  h+=`<button class="chip${activeVenue==="all"&&!favOnly?" on":""}" data-v="all">全部</button>`;
-  for(const[k,V]of Object.entries(VENUES)){
-    h+=`<button class="chip${activeVenue===k?" on":""}" data-v="${k}" style="--c:${V.c}"><span class="dot"></span>${esc(V.name)}</button>`;
-  }
-  el.innerHTML=h;
-  el.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
-    if(b.hasAttribute("data-fav-chip")){favOnly=!favOnly}
-    else{activeVenue=b.dataset.v; favOnly=false}
-    renderChips(); render();
-    if(document.querySelector("#mapsvg .zone")) syncMap();
-  }));
-}
-
-/* ================= MAP ================= */
-const MAP={W:360,H:330,
-  latMax:51.0424,latMin:51.0320,lngMin:-114.0618,lngMax:-114.0462};
-/* GPS→地圖：以場域(經緯度,描圖座標)最小平方擬合線性映射 */
-const FIT=(()=>{ 
-  const vs=Object.values(VENUES);
-  const fit=(xs,ys)=>{const n=xs.length,mx=xs.reduce((a,b)=>a+b)/n,my=ys.reduce((a,b)=>a+b)/n;
-    let num=0,den=0;for(let i=0;i<n;i++){num+=(xs[i]-mx)*(ys[i]-my);den+=(xs[i]-mx)**2}
-    const b=num/den;return[my-b*mx,b]};
-  const[ax,bx]=fit(vs.map(v=>v.lng),vs.map(v=>v.mx));
-  const[ay,by]=fit(vs.map(v=>v.lat),vs.map(v=>v.my));
-  return{ax,bx,ay,by};
-})();
-function proj(lat,lng){return[FIT.ax+FIT.bx*lng, FIT.ay+FIT.by*lat]}
-const GATES=[
-  {mx:166,my:74, lb:"STAMPEDE TRAIL 入口"},
-  {mx:22, my:121,lb:"VICTORIA PARK 入口"},
-  {mx:70, my:320,lb:"ERLTON 入口"},
-  {mx:336,my:96, lb:"MacDONALD 入口"},
-];
-function renderMap(){
-  const svg=document.getElementById("mapsvg");
-  const rr=(k,w,h,rot=0,minor=false,labelAbove=false)=>{
-    const V=VENUES[k],x=V.mx,y=V.my;
-    const ly=labelAbove?y-h/2-5:y+h/2+10;
-    return `<g class="zone" data-v="${k}">
-      <rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" fill="${V.c}" opacity=".85"${rot?` transform="rotate(${rot} ${x} ${y})"`:""}/>
-      <text${minor?' class="lbl-sm"':''} x="${x}" y="${ly}" text-anchor="middle">${V.lb}</text></g>`;
-  };
-  let h=`<defs><pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
-    <line x1="0" y1="0" x2="0" y2="6" stroke="#E6DCC2" stroke-width="2"/></pattern></defs>
-  <!-- 主要幹道 -->
-  <line x1="18" y1="6" x2="18" y2="324" stroke="#DBD2C2" stroke-width="4"/>
-  <text class="road-lb" x="11" y="180" transform="rotate(-90 11 180)" text-anchor="middle">MACLEOD TR</text>
-  <line x1="6" y1="14" x2="300" y2="14" stroke="#DBD2C2" stroke-width="4"/>
-  <text class="road-lb" x="52" y="9">12 AVE</text>
-  <path d="M 164 14 L 164 100 C 164 150 178 200 172 280" stroke="#DBD2C2" stroke-width="4" fill="none"/>
-  <text class="road-lb" x="156" y="58" transform="rotate(-90 156 58)" text-anchor="middle">STAMPEDE TRAIL</text>
-  <text class="road-lb" x="182" y="232" transform="rotate(84 182 232)" text-anchor="middle">OLYMPIC WAY</text>
-  <line x1="6" y1="121" x2="58" y2="121" stroke="#DBD2C2" stroke-width="3"/>
-  <text class="road-lb" x="26" y="116">17 AVE</text>
-  <line x1="6" y1="324" x2="150" y2="324" stroke="#DBD2C2" stroke-width="4"/>
-  <text class="road-lb" x="40" y="319">25 AVE</text>
-  <!-- 施工區 -->
-  <path d="M 176 24 L 232 24 L 226 70 L 180 74 Z" fill="url(#hatch)" opacity=".6"/>
-  <path d="M 34 138 L 70 134 L 66 168 L 32 170 Z" fill="url(#hatch)" opacity=".6"/>
-  <rect x="106" y="22" width="34" height="16" fill="#8C2F1B" opacity=".35"/>
-  <text x="123" y="48" text-anchor="middle" font-size="6" fill="#9A938A" font-family="Space Grotesk" letter-spacing=".05em" class="lbl-sm">COWBOYS CASINO</text>
-  <!-- Elbow River -->
-  <path d="M 296 0 C 292 50 288 90 289 126 C 290 176 268 236 226 282 C 196 314 134 322 72 318"
-    stroke="#D9E3E6" stroke-width="11" fill="none"/>
-  <line x1="282" y1="112" x2="298" y2="112" stroke="#F3EEE6" stroke-width="5"/>
-  <line x1="64" y1="314" x2="80" y2="322" stroke="#F3EEE6" stroke-width="5"/>
-  <text x="300" y="212" font-size="7" fill="#9AAAB0" font-family="Space Grotesk" letter-spacing=".08em">ELBOW R.</text>
-  <path d="M 66 152 L 148 148 L 156 200 L 132 242 L 62 236 Z" fill="#DCC9DA" opacity=".45"/>
-  <path d="M 222 150 L 268 146 L 272 208 L 228 214 Z" fill="#EBDCA8" opacity=".4"/>`;
-  for(const g of GATES){
-    h+=`<text x="${g.mx}" y="${g.my}" text-anchor="middle" font-size="7" fill="#6B6B6B" font-family="Space Grotesk" letter-spacing=".06em">${g.lb}</text>`;
-  }
-  {const V=VENUES.bmo,x=V.mx,y=V.my;
-   h+=`<g class="zone" data-v="bmo"><path d="M ${x-40} ${y-52} L ${x-4} ${y-64} L ${x+28} ${y-46} L ${x+14} ${y-28} L ${x+44} ${y-14} L ${x+40} ${y+16} L ${x+10} ${y+26} L ${x+2} ${y+10} L ${x-24} ${y+22} L ${x-38} ${y-6} Z" fill="${V.c}" opacity=".85"/>
-   <text x="${x-4}" y="${y-2}" text-anchor="middle" fill="#FAF7F2">${V.lb}</text></g>`;}
-  h+=rr("oasis",26,11,0,true,true);
-  h+=rr("taste",26,11,0,true,true);
-  h+=rr("plaza",26,11,0,true);
-  h+=rr("big4",20,54,6);
-  {const V=VENUES.dome,x=V.mx,y=V.my;
-   h+=`<g class="zone" data-v="dome"><ellipse cx="${x}" cy="${y}" rx="26" ry="20" fill="${V.c}" opacity=".9"/>
-   <text x="${x}" y="${y-26}" text-anchor="middle">${V.lb}</text></g>`;}
-  h+=rr("comp",36,13,0,false,true);
-  {const V=VENUES.elbow,x=V.mx,y=V.my;
-   h+=`<g class="zone" data-v="elbow"><rect x="${x-18}" y="${y-28}" width="36" height="56" rx="16" fill="${V.c}" opacity=".85"/>
-   <text x="${x}" y="${y+40}" text-anchor="middle">${V.lb}</text></g>`;}
-  h+=rr("ag",38,16,-20,false,true);
-  h+=rr("wec",40,16,-20);
-  h+=rr("nash",34,13,-25,true);
-  h+=rr("kids",40,14);
-  {const V=VENUES.gmc,x=V.mx,y=V.my;
-   h+=`<g class="zone" data-v="gmc">
-     <g transform="rotate(-15 ${x+52} ${y+2})">
-       <ellipse cx="${x+52}" cy="${y+2}" rx="46" ry="33" fill="none" stroke="${V.c}" stroke-width="10" opacity=".75"/>
-       <ellipse cx="${x+52}" cy="${y+2}" rx="24" ry="14" fill="${V.c}" opacity=".2"/>
-     </g>
-     <rect x="${x-8}" y="${y-24}" width="13" height="46" fill="${V.c}" opacity=".95" transform="rotate(-28 ${x} ${y})"/>
-     <text x="${x+40}" y="${y+50}" text-anchor="middle">${V.lb}</text></g>`;}
-  h+=rr("coke",34,16);
-  h+=rr("dog",32,12,0,true);
-  h+=`<g id="friendpins"></g>
-  <g id="gpspin" style="display:none">
-    <circle class="pin-ring" r="14" fill="none" stroke="#1A1A1A" stroke-width="1.5"/>
-    <circle r="5" fill="#1A1A1A" stroke="#FAF7F2" stroke-width="2"/>
-  </g>`;
-  svg.innerHTML=`<g id="world">${h}</g>`;
-  svg.querySelectorAll(".zone").forEach(g=>g.addEventListener("click",()=>{
-    if(svg._dragged){svg._dragged=false;return}
-    activeVenue=(activeVenue===g.dataset.v)?"all":g.dataset.v;
-    favOnly=false; renderChips(); render(); syncMap();
-  }));
-  initMapZoom();
-  syncMap();
-}
-
-/* ---------- 縮放／平移互動 ---------- */
-function initMapZoom(){
-  const svg=document.getElementById("mapsvg");
-  const world=document.getElementById("world");
-  if(!world)return;
-  let s=1,tx=0,ty=0;
-  const apply=()=>{
-    s=Math.min(4,Math.max(1,s));
-    tx=Math.min(0,Math.max(MAP.W*(1-s),tx));
-    ty=Math.min(0,Math.max(MAP.H*(1-s),ty));
-    world.setAttribute("transform",`translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${s.toFixed(3)})`);
-    svg.classList.toggle("zoomed",s>=1.5);
-  };
-  const toSvg=(cx,cy)=>{const r=svg.getBoundingClientRect();return[(cx-r.left)*MAP.W/r.width,(cy-r.top)*MAP.H/r.height]};
-  if(svg._zoomInit){apply();return}
-  svg._zoomInit=true; svg._dragged=false;
-  const pts=new Map(); let last=null,moved=0;
-  svg.addEventListener("pointerdown",e=>{
-    pts.set(e.pointerId,[e.clientX,e.clientY]);
-    try{svg.setPointerCapture(e.pointerId)}catch(_){}
-    last=null;moved=0;
-  });
-  svg.addEventListener("pointermove",e=>{
-    if(!pts.has(e.pointerId))return;
-    pts.set(e.pointerId,[e.clientX,e.clientY]);
-    const arr=[...pts.values()];
-    if(arr.length===1){
-      if(last&&!last.d){
-        const[px,py]=toSvg(last[0],last[1]),[qx,qy]=toSvg(arr[0][0],arr[0][1]);
-        tx+=qx-px;ty+=qy-py;moved+=Math.hypot(qx-px,qy-py);apply();
-      }
-      last=arr[0].slice();
-    }else if(arr.length===2){
-      const d=Math.hypot(arr[0][0]-arr[1][0],arr[0][1]-arr[1][1]);
-      const mid=[(arr[0][0]+arr[1][0])/2,(arr[0][1]+arr[1][1])/2];
-      if(last&&last.d){
-        const[mx,my]=toSvg(mid[0],mid[1]);
-        const px=(mx-tx)/s,py=(my-ty)/s;
-        s*=d/last.d;s=Math.min(4,Math.max(1,s));
-        tx=mx-px*s;ty=my-py*s;moved=99;apply();
-      }
-      last={d,mid};
-    }
-  });
-  const up=e=>{pts.delete(e.pointerId);last=null;if(moved>5)svg._dragged=true};
-  svg.addEventListener("pointerup",up);
-  svg.addEventListener("pointercancel",up);
-  svg.addEventListener("wheel",e=>{
-    e.preventDefault();
-    const[mx,my]=toSvg(e.clientX,e.clientY);
-    const px=(mx-tx)/s,py=(my-ty)/s;
-    s*=e.deltaY<0?1.15:0.87;s=Math.min(4,Math.max(1,s));
-    tx=mx-px*s;ty=my-py*s;apply();
-  },{passive:false});
-  svg.addEventListener("dblclick",()=>{s=1;tx=0;ty=0;apply()});
-}
-function syncMap(){
-  document.querySelectorAll("#mapsvg .zone").forEach(g=>{
-    g.classList.toggle("dim", activeVenue!=="all"&&g.dataset.v!==activeVenue);
-  });
-}
-
-/* ================= GPS ================= */
-let watchId=null, userPos=null;
-const R=6371000, rad=d=>d*Math.PI/180;
-function distM(a,b,c,d){
-  const dLat=rad(c-a), dLng=rad(d-b);
-  const s=Math.sin(dLat/2)**2+Math.cos(rad(a))*Math.cos(rad(c))*Math.sin(dLng/2)**2;
-  return 2*R*Math.asin(Math.sqrt(s));
-}
-function onPos(p){
-  userPos={lat:p.coords.latitude,lng:p.coords.longitude};
-  const pin=document.getElementById("gpspin");
-  const note=document.getElementById("mapNote");
-  const inPark=userPos.lat>MAP.latMin&&userPos.lat<MAP.latMax&&userPos.lng>MAP.lngMin&&userPos.lng<MAP.lngMax;
-  if(inPark){
-    const[x,y]=proj(userPos.lat,userPos.lng);
-    pin.style.display="";
-    pin.setAttribute("transform",`translate(${x.toFixed(1)},${y.toFixed(1)})`);
-    note.textContent="附近活動依你的位置即時排序（場域座標為近似值，誤差約數十公尺）。";
-  }else{
-    pin.style.display="none";
-    note.textContent="你目前在園區範圍外——已依直線距離列出最近的場域。";
-  }
-  renderNearby(); renderNextUp();
-}
-function onPosErr(err){
-  document.getElementById("mapNote").textContent="無法取得定位（"+(err.code===1?"權限被拒":"訊號不佳")+"）。可直接點色塊瀏覽各場域。";
-  stopWatch();
-}
-function startWatch(){
-  if(!("geolocation" in navigator)){onPosErr({code:0});return}
-  const btn=document.getElementById("locBtn");
-  btn.classList.add("on"); btn.textContent="定位中";
-  watchId=navigator.geolocation.watchPosition(onPos,onPosErr,{enableHighAccuracy:true,maximumAge:15000,timeout:12000});
-}
-function stopWatch(){
-  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
-  userPos=null;
-  const btn=document.getElementById("locBtn");
-  btn.classList.remove("on"); btn.textContent="定位";
-  document.getElementById("gpspin").style.display="none";
-  document.getElementById("nearby").classList.remove("show");
-}
-document.getElementById("locBtn").addEventListener("click",()=>{
-  watchId===null?startWatch():stopWatch();
-});
-
-function venueStatusLine(k,now){
-  const evs=EV.filter(e=>e.v===k&&!e.ad).sort((a,b)=>a.t-b.t);
-  const live=evs.find(e=>now>=e.t&&now<e.t+LIVE_WINDOW);
-  if(live) return {txt:live.n,tag:"live"};
-  const next=evs.find(e=>e.t>now);
-  if(next){const f=fmt(next.t);return {txt:`${f.h} ${f.ap} · ${next.n}`,tag:"next"}}
-  const ad=EV.find(e=>e.v===k&&e.ad);
-  if(ad) return {txt:`全天 · ${ad.n}`,tag:"ad"};
-  return {txt:"今日場次已結束",tag:"done"};
-}
-function renderNearby(){
-  if(!userPos)return;
-  const now=nowMin();
-  const box=document.getElementById("nearby");
-  const list=Object.entries(VENUES)
-    .map(([k,V])=>({k,V,d:distM(userPos.lat,userPos.lng,V.lat,V.lng)}))
-    .sort((a,b)=>a.d-b.d).slice(0,4);
-  box.innerHTML=list.map(({k,V,d})=>{
-    const s=venueStatusLine(k,now);
-    const dTxt=d<950?`${Math.round(d/10)*10} m`:`${(d/1000).toFixed(1)} km`;
-    return `<div class="nb">
-      <div class="nb-l"><span class="dot" style="background:${V.c}"></span>
-        <span class="nb-v">${esc(V.name)}</span>
-        <span class="nb-e">${s.tag==="live"?"▸ ":""}${esc(s.txt)}</span></div>
-      <div class="nb-d">${s.tag==="live"?`<span class="live-t">LIVE</span> · `:""}${dTxt}</div>
-    </div>`;
-  }).join("");
-  box.classList.add("show");
-}
-
-/* ================= FRIENDS ================= */
-const FRIENDS=["Aiden","Becky","Grace","Adam"];
-let myName=null;
-try{myName=localStorage.getItem("stampede-name")}catch(_){}
-let friendLocs=[];
-
-function getOnce(){
-  return new Promise((ok,no)=>{
-    if(userPos)return ok(userPos);
-    if(!("geolocation" in navigator))return no(new Error("no-geo"));
-    navigator.geolocation.getCurrentPosition(
-      p=>ok({lat:p.coords.latitude,lng:p.coords.longitude}),
-      e=>no(e),{enableHighAccuracy:true,timeout:12000,maximumAge:10000});
-  });
-}
-async function announceHere(name){
-  const btn=document.getElementById("hereBtn");
-  btn.disabled=true;btn.textContent="上傳中";
-  try{
-    const pos=await getOnce();
-    const r=await fetch("/api/here",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({name,lat:pos.lat,lng:pos.lng})});
-    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||r.status)}
-    myName=name;
-    try{localStorage.setItem("stampede-name",name)}catch(_){}
-    document.getElementById("mapNote").textContent=`已標記 ${name} 的位置——朋友的地圖 30 秒內會看到你。`;
-    fetchFriends();
-  }catch(e){
-    document.getElementById("mapNote").textContent=
-      e.message==="db-not-configured"?"後端尚未設定 DATABASE_URL，暫時無法共享定位。"
-      :"定位上傳失敗（"+(e.code===1?"定位權限被拒":"請再試一次")+"）。";
-  }
-  btn.disabled=false;btn.textContent="I'm here";
-}
-function showNamePick(){
-  const box=document.getElementById("namepick");
-  if(box.classList.contains("show")){box.classList.remove("show");return}
-  box.innerHTML=FRIENDS.map(n=>`<button data-n="${n}">${n===myName?"● ":""}${n}</button>`).join("")
-    +`<button class="cancel" data-n="">取消</button>`;
-  box.classList.add("show");
-  box.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
-    box.classList.remove("show");
-    if(b.dataset.n) announceHere(b.dataset.n);
-  }));
-}
-document.getElementById("hereBtn").addEventListener("click",showNamePick);
-
-async function fetchFriends(){
-  try{
-    const r=await fetch("/api/here");
-    if(!r.ok)return;
-    const d=await r.json();
-    friendLocs=Array.isArray(d.locs)?d.locs:[];
-    renderFriends();
-  }catch(_){/* 靜默 */}
-}
-function renderFriends(){
-  const layer=document.getElementById("friendpins");
-  if(!layer)return;
-  layer.innerHTML=friendLocs.map(f=>{
-    let[x,y]=proj(f.lat,f.lng);
-    x=Math.min(MAP.W-12,Math.max(12,x)); y=Math.min(MAP.H-16,Math.max(12,y));
-    const mine=f.name===myName;
-    const age=f.age_s>300?` · ${Math.round(f.age_s/60)}'`:"";
-    return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})">
-      <circle class="fr-ring" r="11" fill="#1A1A1A"/>
-      <circle r="4" fill="#1A1A1A" stroke="#FAF7F2" stroke-width="1.5"/>
-      <text y="20" text-anchor="middle" font-size="7" font-family="Space Grotesk" letter-spacing=".08em"
-        fill="#1A1A1A"${mine?' font-weight="600"':""}>${f.name.toUpperCase()}${age}</text>
-    </g>`;
-  }).join("");
-}
-fetchFriends();
-
-/* ================= CLOCK ================= */
-function tickClock(){
-  const d=new Date();
-  document.getElementById("clock").textContent=
-    d.toLocaleTimeString("en-CA",{hour:"numeric",minute:"2-digit",hour12:true});
-}
-
-/* ================= INIT ================= */
-const qEl=document.getElementById("q"), sb=document.getElementById("sb");
-qEl.addEventListener("input",()=>{query=qEl.value;sb.classList.toggle("has-q",!!query);render()});
-document.getElementById("clr").addEventListener("click",()=>{qEl.value="";query="";sb.classList.remove("has-q");render();qEl.focus()});
-renderChips(); render(); renderMap(); tickClock();
-setInterval(()=>{tickClock();render();renderNearby();renderNextUp();fetchFriends()},30000); // 每 30 秒重算狀態
+    <div class="card-name">${esc(e.name)}</div>
+    <div class="card-when">${esc(e.when)}</div>
+    <div class="card-desc">${esc(e.desc)}</div>
+    <div class="card-go">查看節目表 <span class="arr">→</span></div>
+  </a>
+`).join("") + `<div class="card soon">更多活動陸續加入⋯</div>`;
 </script>
 </body>
 </html>
