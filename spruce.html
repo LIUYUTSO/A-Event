@@ -582,7 +582,7 @@ function updateNote(){
   const n=document.getElementById("mapNote");
   n.textContent=activeLoc!==null
     ?`已選：${activeLoc} ${LOC[activeLoc].n}（再點一次取消）。示意位置，非精準比例，北方朝上。`
-    :`依現場 Market Guide 手繪的示意位置，非精準比例，北方朝上。${mode==="food"?"圓圈數字＝該地點今日美食攤位數。":mode==="shop"?"圓圈數字＝該地點今日購物攤位數。":""}`;
+    :`依現場 Market Guide 手繪的示意位置，非精準比例，北方朝上。按「定位」時瀏覽器會詢問位置權限，位置只在你的裝置上計算，不會上傳。${mode==="food"?"圓圈數字＝該地點今日美食攤位數。":mode==="shop"?"圓圈數字＝該地點今日購物攤位數。":""}`;
   if(gpsMsg)n.textContent+=" "+gpsMsg;
 }
 function initMapZoom(){
@@ -657,10 +657,18 @@ function placePin(){
 function renderNearby(m){
   const box=document.getElementById("nearby");
   if(!m){box.classList.remove("show");box.innerHTML="";return}
-  const list=LOCS.filter(l=>l.id).map(l=>({l,d:Math.hypot(l.mx-OX-m[0],l.my-OY-m[1])*SCALE,c:counts(l.id)}))
-    .sort((a,b)=>a.d-b.d).slice(0,4);
-  box.innerHTML=`<div class="sec-label" style="margin:10px 0 2px">離你最近</div>`+list.map(({l,d,c})=>
-    `<div class="nb"><div>${l.id} ${esc(l.n)}<span style="margin-left:8px">🍴${c.f} 🛍${c.s}</span></div><span>約 ${d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km"}</span></div>`).join("");
+  const dist=l=>Math.hypot(l.mx-OX-m[0],l.my-OY-m[1])*SCALE;
+  const fmtD=d=>"約 "+(d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km");
+  const list=LOCS.filter(l=>l.id).map(l=>({l,d:dist(l),c:counts(l.id)})).sort((a,b)=>a.d-b.d);
+  const D=Object.fromEntries(list.map(x=>[x.l.id,x.d]));
+  const near=cat=>VENDORS.filter(v=>v.cat===cat&&v.loc>0).sort((a,b)=>D[a.loc]-D[b.loc]||a.n.localeCompare(b.n)).slice(0,6);
+  const rows=(arr)=>arr.map(v=>`<div class="nb"><div>${esc(v.n)}<span style="margin-left:8px">${v.loc} ${esc(LOC[v.loc].n)}</span></div><span>${fmtD(D[v.loc])}</span></div>`).join("");
+  box.innerHTML=
+    `<div class="sec-label" style="margin:10px 0 2px">離你最近</div>`+
+    list.slice(0,3).map(({l,d,c})=>`<div class="nb"><div>${l.id} ${esc(l.n)}<span style="margin-left:8px">🍴${c.f} 🛍${c.s}</span></div><span>${fmtD(d)}</span></div>`).join("")+
+    `<div class="sec-label" style="margin:14px 0 2px;color:var(--food)">🍴 附近美食</div>`+rows(near("food"))+
+    `<div class="sec-label" style="margin:14px 0 2px;color:var(--shop)">🛍 附近購物</div>`+rows(near("shop"))+
+    `<div style="font-size:10.5px;color:var(--sub);padding:8px 0 6px;line-height:1.6">攤位只知道所在地點，距離是到該地點的估計值，同一地點內的攤位無法再細分；餐車與戶外攤位沒有位置，不列入推薦。</div>`;
   box.classList.add("show");
 }
 function onPos(p){
@@ -674,7 +682,7 @@ function onPos(p){
 }
 function onPosErr(err){
   if(err.code===1||!("geolocation" in navigator)){
-    gpsMsg="無法取得定位（"+(err.code===1?"權限被拒":"此裝置不支援")+"）。仍可點編號瀏覽各地點。";
+    gpsMsg="無法取得定位（"+(err.code===1?"權限被拒，請到瀏覽器的網站設定把位置改為允許後，再按一次定位":"此裝置不支援")+"）。仍可點編號瀏覽各地點。";
     stopWatch(true);
   }else{
     gpsMsg="定位訊號暫時不佳，保留最後位置並持續重試⋯";
