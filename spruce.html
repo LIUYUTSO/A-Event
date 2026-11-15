@@ -60,7 +60,10 @@ header{position:sticky;top:0;z-index:20;background:rgba(246,239,224,.95);backdro
 /* ---------- map ---------- */
 .mapsec{max-width:720px;margin:16px auto 0;padding:0 20px}
 .map-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.map-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.map-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.map-head{gap:8px}
+.map-head .locate{flex:0 0 auto;min-width:72px;white-space:nowrap;text-align:center}
+#calBtn{min-width:128px}
 .mapbox{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
   width:100%;aspect-ratio:520/460;min-height:260px}
 .mapbox svg{display:block;width:100%;height:100%}
@@ -82,12 +85,12 @@ header{position:sticky;top:0;z-index:20;background:rgba(246,239,224,.95);backdro
 .locate.cal.on{background:var(--gold);color:#2B1A1D;border-color:var(--gold)}
 .pin-ring{animation:ring 2.4s ease-out infinite;transform-origin:center;transform-box:fill-box}
 @keyframes ring{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
-.nearby{margin-top:10px;display:none;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px 14px}
-.nearby.show{display:block}
+.nearby{margin-top:10px;height:280px;overflow-y:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px 14px}
+.nearby .ph{font-size:12.5px;color:var(--sub);line-height:1.7;padding:14px 0}
 .nb{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
 .nb:last-child{border-bottom:none}
 .nb span{color:var(--sub);font-size:11.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
-.map-note{font-size:10.5px;color:var(--sub);margin-top:8px;line-height:1.6}
+.map-note{font-size:10.5px;color:var(--sub);margin-top:8px;line-height:1.6;min-height:calc(1.6em * 6)}
 
 /* ---------- list ---------- */
 main{max-width:720px;margin:0 auto;padding:6px 20px 0}
@@ -130,6 +133,7 @@ details.blk[open] summary .tw{transform:rotate(180deg)}
 .promo p{font-size:12.5px;margin-top:6px;line-height:1.7;color:#CFE0D5}
 .promo a{display:inline-block;margin-top:10px;font-size:12px;color:#F2D58A}
 footer{max-width:720px;margin:0 auto;padding:22px 20px 0;font-size:10.5px;color:var(--sub);line-height:1.8}
+@media (max-width:359px){.map-note{min-height:calc(1.6em * 7)}}
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -656,7 +660,7 @@ function placePin(){
 }
 function renderNearby(m){
   const box=document.getElementById("nearby");
-  if(!m){box.classList.remove("show");box.innerHTML="";return}
+  if(!m){box.innerHTML=`<div class="ph">按「定位」或「我在這裡」後，這裡會列出離你最近的地點，以及附近的美食與購物。</div>`;return}
   const dist=l=>Math.hypot(l.mx-OX-m[0],l.my-OY-m[1])*SCALE;
   const fmtD=d=>"約 "+(d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km");
   const list=LOCS.filter(l=>l.id).map(l=>({l,d:dist(l),c:counts(l.id)})).sort((a,b)=>a.d-b.d);
@@ -669,7 +673,7 @@ function renderNearby(m){
     `<div class="sec-label" style="margin:14px 0 2px;color:var(--food)">🍴 附近美食</div>`+rows(near("food"))+
     `<div class="sec-label" style="margin:14px 0 2px;color:var(--shop)">🛍 附近購物</div>`+rows(near("shop"))+
     `<div style="font-size:10.5px;color:var(--sub);padding:8px 0 6px;line-height:1.6">攤位只知道所在地點，距離是到該地點的估計值，同一地點內的攤位無法再細分；餐車與戶外攤位沒有位置，不列入推薦。</div>`;
-  box.classList.add("show");
+  box.scrollTop=0;
 }
 function onPos(p){
   userPos={lat:p.coords.latitude,lng:p.coords.longitude};
@@ -725,7 +729,7 @@ qEl.addEventListener("input",()=>{query=qEl.value;sb.classList.toggle("has-q",!!
 document.getElementById("clr").addEventListener("click",()=>{qEl.value="";query="";sb.classList.remove("has-q");render()});
 
 /* ================= INIT ================= */
-renderChips();renderMap();updateNote();render();renderNext();tickClock();
+renderChips();renderMap();updateNote();render();renderNext();tickClock();renderNearby(null);
 setInterval(()=>{tickClock();renderNext()},30000);
 </script>
 </body>
