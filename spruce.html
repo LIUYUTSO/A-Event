@@ -106,6 +106,15 @@ main,.intro,.sec{max-width:720px;margin:0 auto;padding:0 20px}
 .loc.done .chk{background:var(--green);border-color:var(--green);color:#F6EFE0}
 .empty{font-size:13px;color:var(--sub);padding:18px 0;text-align:center}
 
+.info{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.hrs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.hrs div{background:var(--bg);border-radius:10px;padding:9px 10px}
+.hrs b{display:block;font-family:"Bevan",sans-serif;font-size:13px;color:var(--ink)}
+.hrs span{display:block;font-size:11.5px;color:var(--body);margin-top:3px;line-height:1.5}
+.info ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.info li{font-size:12.5px;line-height:1.6;padding-left:14px;position:relative}
+.info li::before{content:"•";position:absolute;left:0;color:var(--red)}
+.info .note{font-size:11px;color:var(--sub);margin-top:10px}
 .promo{
   margin-top:28px;padding:18px;border-radius:var(--r);background:var(--green);color:#F6EFE0;
 }
@@ -128,6 +137,33 @@ footer{max-width:720px;margin:0 auto;padding:26px 20px 0;font-size:10.5px;color:
 </header>
 
 <section class="intro" id="intro"></section>
+
+<section class="sec">
+  <div class="sec-label">Plan Your Visit · 營業時間與票價</div>
+  <div class="info">
+    <div class="hrs">
+      <div><b>週五</b><span>12–6pm 全齡<br>6–9pm 限 18+</span></div>
+      <div><b>週六</b><span>10am–7pm</span></div>
+      <div><b>週日</b><span>10am–6pm</span></div>
+    </div>
+    <ul>
+      <li>一般票約 $20；3–12 歲與 65+ 約 $12；2 歲以下免費（實際以結帳金額為準）。</li>
+      <li>週五日間票，18 歲以上可直接留到晚上場，不用另買。</li>
+      <li>停車免費；較近的 VIP 停車位有限，結帳時加購。</li>
+      <li>只買官方或 Showpass 的票，轉售平台的票不保證入場。</li>
+    </ul>
+  </div>
+  <div class="sec-label">Highlights · 已公布的活動</div>
+  <div class="info">
+    <ul>
+      <li>每週日 11am–4pm：馴鹿（Riding Hall Circle）。</li>
+      <li>Santa's Cozy Corner（Upper Plaza）：與 Santa 拍照，每張捐 $10 給 Habitat for Humanity。</li>
+      <li>Petting Zoo 10:05am–6pm；冰雕師 Julian Lee 12–5pm（Deloitte Ring）；Hybrid Harmony 12–3pm、Calgary Youth Singers 3–5pm（園區巡演）。</li>
+      <li>Miracle at the Meadows 節慶調酒吧。</li>
+    </ul>
+    <p class="note">官網沒有寫上述活動是哪幾天舉行，出發前請再確認。</p>
+  </div>
+</section>
 
 <section class="sec">
   <div class="sec-label">Market Map · 點編號跳到地點</div>
@@ -155,7 +191,7 @@ footer{max-width:720px;margin:0 auto;padding:26px 20px 0;font-size:10.5px;color:
 </main>
 
 <footer>
-  資料整理自現場發送的 Your Market Guide。海報上沒有標示營業時段與分時節目，詳情請看 Spruce Meadows 官方公告。<br>
+  資料整理自現場發送的 Your Market Guide。營業時間、票價與活動整理自 <a href="https://www.sprucemeadows.com/christmas" target="_blank" rel="noopener">Spruce Meadows 官網</a>，實際以官方公告為準。<br>
   <a href="/index.html">← 回到活動入口</a>
 </footer>
 
@@ -174,14 +210,14 @@ const LOCS=[
   {id:2, n:"Candy Cane Lane", mx:314,my:172, food:["Café Croissant: L'heure du goûter"]},
   {id:3, n:"TELUS Riding Hall", mx:336,my:47, food:["Arepa Boss","The Sausage King"]},
   {id:4, n:"Bantrel Winter Wonderland", mx:453,my:87},
-  {id:5, n:"Riding Hall Circle Pavilion", mx:386,my:132},
+  {id:5, n:"Riding Hall Circle Pavilion", mx:386,my:132, tag:"週日 11am–4pm 馴鹿"},
   {id:6, n:"Horizons Pavilion", mx:387,my:369},
-  {id:7, n:"Upper Plaza & Gardenhaus", mx:342,my:329},
+  {id:7, n:"Upper Plaza & Gardenhaus", mx:342,my:329, tag:"Santa's Cozy Corner 拍照"},
   {id:8, n:"ATCO Energy Pavilion", mx:479,my:376},
   {id:9, n:"Village Shops", mx:460,my:282},
   {id:10,n:"Founders Plaza Pavilion", mx:552,my:135},
   {id:11,n:"Founders Plaza", mx:552,my:174, food:["Al's Chimney Cakes"]},
-  {id:12,n:"Miracle at the Meadows", mx:543,my:350},
+  {id:12,n:"Miracle at the Meadows", mx:543,my:350, tag:"節慶調酒吧"},
 ];
 const FAC=[
   {t:"WEST TICKET ENTRANCE",x:265,y:430},
@@ -217,7 +253,7 @@ function renderIntro(){
   document.getElementById("intro").innerHTML=
     `<div class="disp">Your Market Guide</div>
      <span class="status ${cls}">${w.sub} · ${txt}</span>
-     <p>四個週末舉行（11/13–15、11/20–22、11/27–29、12/4–6），每個週末的地點相同。下方可以邊逛邊打卡，進度只存在這支手機的瀏覽器裡。</p>`;
+     <p>四個週末舉行（11/13–15、11/20–22、11/27–29、12/4–6），每個週末的地點相同（週五 12–6pm、週六 10am–7pm、週日 10am–6pm）。下方可以邊逛邊打卡，進度只存在這支手機的瀏覽器裡。</p>`;
 }
 function renderMap(){
   document.getElementById("mapsvg").innerHTML=
