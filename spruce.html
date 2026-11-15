@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Spruce Meadows Christmas Market · 今日</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Bevan&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6EFE0; --bg2:#EFE5D0; --card:#FFFBF2; --ink:#2B1A1D; --body:#4A3A3C; --sub:#85706F; --line:#DCCDB3;
+  --green:#1F4D3A; --red:#7A1F2B; --gold:#B88A2E;
+  --food:#C9741E; --food-bg:#FBEBD3; --shop:#6A4C93; --shop-bg:#ECE4F5;
+  --r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--body);min-height:100dvh;padding-bottom:64px;
+  font-family:"Space Grotesk",system-ui,-apple-system,"PingFang TC",sans-serif}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+input{font:inherit}
+a{color:inherit}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:20;background:rgba(246,239,224,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);border-top:4px solid var(--green);padding:12px 20px 0}
+.hd-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;max-width:720px;margin:0 auto}
+.hd-title{font-family:"Bevan",sans-serif;font-size:16px;color:var(--ink);letter-spacing:.02em}
+.hd-title span{color:var(--red)}
+.hd-clock{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hd-sub{max-width:720px;margin:3px auto 0;font-size:11.5px;color:var(--sub);letter-spacing:.03em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{font-size:10px;letter-spacing:.1em;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--green);color:#F6EFE0}
+.badge.closed{background:var(--line);color:var(--sub)}
+.badge.soon{background:var(--gold);color:#2B1A1D}
+.searchbar{max-width:720px;margin:10px auto 0;position:relative}
+.searchbar input{width:100%;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+  font-size:14px;color:var(--body);outline:none}
+.searchbar input:focus{border-color:var(--gold)}
+.searchbar .clr{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;
+  background:var(--line);font-size:13px;display:none}
+.searchbar.has-q .clr{display:block}
+.chips{max-width:720px;margin:0 auto;display:flex;gap:8px;overflow-x:auto;padding:10px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;border:1px solid var(--line);
+  background:var(--card);color:var(--sub);white-space:nowrap;display:flex;align-items:center;gap:6px;transition:all .2s ease}
+.chip.on{background:var(--ink);color:#F6EFE0;border-color:var(--ink)}
+.chip.food.on{background:var(--food);border-color:var(--food);color:#fff}
+.chip.shop.on{background:var(--shop);border-color:var(--shop);color:#fff}
+.chip b{font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---------- next up ---------- */
+.nextup{max-width:720px;margin:14px auto 0;padding:0 20px;display:none}
+.nextup.show{display:block}
+.nu{background:var(--green);color:#F6EFE0;border-radius:var(--r);padding:13px 16px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.nu-tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#B9D3C4}
+.nu-name{font-size:15px;font-weight:600;margin-top:3px}
+.nu-meta{font-size:11.5px;color:#CFE0D5;margin-top:2px}
+.nu-r{font-family:"Bevan",sans-serif;font-size:15px;color:#F2D58A;white-space:nowrap}
+
+/* ---------- map ---------- */
+.mapsec{max-width:720px;margin:16px auto 0;padding:0 20px}
+.map-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.map-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.map-head{gap:8px}
+.map-head .locate{flex:0 0 auto;min-width:72px;white-space:nowrap;text-align:center}
+#calBtn{min-width:128px}
+.mapbox{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  width:100%;aspect-ratio:520/460;min-height:260px}
+.mapbox svg{display:block;width:100%;height:100%}
+#mapsvg{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.zone{cursor:pointer;transition:opacity .2s ease}
+.zone .pc{fill:var(--red);stroke:#FFF6E6;stroke-width:3;transition:fill .2s ease}
+.zone.food .pc{fill:var(--food)}
+.zone.shop .pc{fill:var(--shop)}
+.zone.sel .pc{stroke:var(--ink);stroke-width:4}
+.zone.dim{opacity:.22}
+.zone text{font-family:"Space Grotesk",sans-serif;font-weight:700;fill:#FFF6E6;text-anchor:middle;pointer-events:none}
+.zone .pn{font-size:19px;dominant-baseline:central}
+.zone .pl{font-size:10px;fill:var(--ink);font-weight:600;stroke:var(--bg2);stroke-width:3;paint-order:stroke;display:none}
+#mapsvg.zoomed .pl{display:block}
+.fac{font-family:"Space Grotesk",sans-serif;font-size:11px;fill:var(--sub);text-anchor:middle;letter-spacing:.06em}
+.locate{font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);transition:all .2s ease}
+.locate.on{background:var(--ink);color:#F6EFE0}
+.locate.cal{border-color:var(--gold);color:var(--gold)}
+.locate.cal.on{background:var(--gold);color:#2B1A1D;border-color:var(--gold)}
+.pin-ring{animation:ring 2.4s ease-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes ring{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
+.nearby{margin-top:10px;height:280px;overflow-y:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:4px 14px}
+.nearby .ph{font-size:12.5px;color:var(--sub);line-height:1.7;padding:14px 0}
+.nb{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--ink)}
+.nb:last-child{border-bottom:none}
+.nb span{color:var(--sub);font-size:11.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.map-note{font-size:10.5px;color:var(--sub);margin-top:8px;line-height:1.6;min-height:calc(1.6em * 6)}
+
+/* ---------- list ---------- */
+main{max-width:720px;margin:0 auto;padding:6px 20px 0}
+.sec-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin:24px 0 10px;display:flex;align-items:center;gap:10px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--line)}
+.loc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;padding:14px;scroll-margin-top:200px}
+.loc.sel{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,138,46,.25)}
+.loc-h{display:flex;gap:12px;align-items:center}
+.num{width:30px;height:30px;border-radius:50%;background:var(--red);color:#FFF6E6;font-weight:700;font-size:14px;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.num.o{background:var(--sub)}
+.loc-n{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.loc-s{font-size:11px;color:var(--sub);margin-top:2px}
+.act{margin-top:10px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink);
+  padding:8px 10px;border-radius:9px;background:var(--bg)}
+.act small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+.tag{font-size:9.5px;letter-spacing:.08em;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;background:var(--line);color:var(--sub)}
+.tag.live{background:var(--red);color:#FFF6E6}
+.tag.soon{background:var(--gold);color:#2B1A1D}
+.tag.q{background:transparent;border:1px dashed var(--sub)}
+
+details.blk{margin-top:10px;border-radius:10px;border-left:4px solid var(--c);background:var(--cb);overflow:hidden}
+details.blk.food{--c:var(--food);--cb:var(--food-bg)}
+details.blk.shop{--c:var(--shop);--cb:var(--shop-bg)}
+details.blk summary{list-style:none;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+details.blk summary::-webkit-details-marker{display:none}
+details.blk summary i{font-style:normal;font-weight:400;font-size:11px;color:var(--sub)}
+details.blk summary .tw{transition:transform .2s ease;font-size:10px;color:var(--c)}
+details.blk[open] summary .tw{transform:rotate(180deg)}
+.vl{padding:0 12px 8px}
+.v{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(0,0,0,.07);font-size:13px;color:var(--body)}
+.v small{color:var(--sub);font-size:10.5px;margin-left:6px;font-variant-numeric:tabular-nums}
+.v .wk{color:var(--red)}
+.heart{width:28px;height:28px;border-radius:50%;font-size:15px;color:#C9B9A0;flex:0 0 auto;transition:all .15s ease}
+.heart.on{color:var(--red)}
+.empty{font-size:13px;color:var(--sub);padding:28px 0;text-align:center}
+.promo{margin-top:26px;padding:18px;border-radius:var(--r);background:var(--green);color:#F6EFE0}
+.promo b{font-family:"Bevan",sans-serif;font-size:17px;font-weight:400;color:#F2D58A}
+.promo p{font-size:12.5px;margin-top:6px;line-height:1.7;color:#CFE0D5}
+.promo a{display:inline-block;margin-top:10px;font-size:12px;color:#F2D58A}
+footer{max-width:720px;margin:0 auto;padding:22px 20px 0;font-size:10.5px;color:var(--sub);line-height:1.8}
+@media (max-width:359px){.map-note{min-height:calc(1.6em * 7)}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd-top">
+    <div class="hd-title">SPRUCE MEADOWS <span>XMAS</span> MARKET</div>
+    <div class="hd-clock" id="clock">--:--</div>
+  </div>
+  <div class="hd-sub" id="hdsub"></div>
+  <div class="searchbar" id="sb">
+    <input id="q" type="search" placeholder="搜尋：Chimney、Taqueria、alpaca、Santa⋯" autocomplete="off">
+    <button class="clr" id="clr" aria-label="清除">✕</button>
+  </div>
+  <div class="chips" id="chips"></div>
+</header>
+
+<div class="nextup" id="nextup"></div>
+
+<section class="mapsec">
+  <div class="map-head">
+    <div class="map-title">Market Map · 點編號篩選 · 雙指縮放</div>
+    <div style="display:flex;gap:8px"><button class="locate cal" id="calBtn">我在這裡</button><button class="locate" id="locBtn">定位</button></div>
+  </div>
+  <div class="mapbox"><svg id="mapsvg" viewBox="0 0 520 460" role="img" aria-label="園區示意地圖"></svg></div>
+  <div class="map-note" id="mapNote"></div>
+  <div class="nearby" id="nearby"></div>
+</section>
+
+<main id="main"></main>
+
+<main>
+  <div class="promo">
+    <b>Enchanted Festival</b>
+    <p>12/12 – 12/23 · Spruce Meadows，ATCO Energy 冠名。4 人以上團體票 8 折，早鳥票販售中。</p>
+    <a href="https://www.sprucemeadows.com/enchanted" target="_blank" rel="noopener">www.sprucemeadows.com/enchanted ↗</a>
+  </div>
+</main>
+
+<footer>
+  營業時間、票價、活動與攤位名單整理自 <a href="https://www.sprucemeadows.com/christmas" target="_blank" rel="noopener">Spruce Meadows 官網</a>與現場 Market Guide。
+  官網的攤位只標編號，沒有對照到館別：本頁依編號前綴推算所在地點（EP＝Equi-Plex、R＝TELUS Riding Hall、RC＝Riding Hall Circle、H＝Horizons、C＝Candy Cane、FP＝Founders Plaza、UP＝Upper Plaza），餐車與戶外攤位歸在「戶外／其他」。
+  名單未涵蓋全部約 325 家，部分攤位只在特定週末出現（已依今日所屬週末過濾）。一般票約 $20、3–12 歲與 65+ 約 $12、2 歲以下免費，停車免費，詳情以官方公告為準。<br>
+  <a href="/index.html">← 回到活動入口</a>
+</footer>
+
+<script>
+/* ================= 今日（限定單日） ================= */
+const HOURS=d=>d===5?{o:12,c:18,eve:21}:d===6?{o:10,c:19}:{o:10,c:18};
+const WEEKENDS=[[10,13],[10,20],[10,27],[11,4]];
+const OPEN=[];
+WEEKENDS.forEach(([m,d],i)=>{[[0,5],[1,6],[2,0]].forEach(([off,dow])=>OPEN.push({date:new Date(2026,m,d+off),dow,wk:i+1}))});
+const now0=new Date();
+const todayMs=new Date(now0.getFullYear(),now0.getMonth(),now0.getDate()).getTime();
+let TARGET=OPEN.find(o=>o.date.getTime()>=todayMs)||OPEN[OPEN.length-1];
+const IS_TODAY=TARGET.date.getTime()===todayMs;
+const SEASON_OVER=todayMs>OPEN[OPEN.length-1].date.getTime();
+const WK=TARGET.wk, H=HOURS(TARGET.dow);
+const DOW=["週日","週一","週二","週三","週四","週五","週六"];
+const hm=x=>{const h=Math.floor(x),m=Math.round((x-h)*60);return `${((h+11)%12)+1}${m?":"+String(m).padStart(2,"0"):""}${h<12?"am":"pm"}`};
+const hoursTxt=`${hm(H.o)}–${hm(H.c)}`+(H.eve?`（${hm(H.c)}–${hm(H.eve)} 限 18+）`:"");
+const nowH=()=>{const d=new Date();return d.getHours()+d.getMinutes()/60};
+
+/* ================= DATA ================= */
+/* 地點：mx,my 為示意座標（依 Market Guide 地圖手繪，非精準比例） */
+const LOCS=[
+  {id:1, n:"Equi-Plex",                 mx:253,my:202, tag:"服務台、洗手間、無障礙洗手間"},
+  {id:2, n:"Candy Cane Lane",           mx:314,my:172},
+  {id:3, n:"TELUS Riding Hall",         mx:336,my:47},
+  {id:4, n:"Bantrel Winter Wonderland", mx:453,my:87},
+  {id:5, n:"Riding Hall Circle Pavilion",mx:386,my:132},
+  {id:6, n:"Horizons Pavilion",         mx:387,my:369},
+  {id:7, n:"Upper Plaza & Gardenhaus",  mx:342,my:329},
+  {id:8, n:"ATCO Energy Pavilion",      mx:479,my:376},
+  {id:9, n:"Village Shops",             mx:460,my:282},
+  {id:10,n:"Founders Plaza Pavilion",   mx:552,my:135},
+  {id:11,n:"Founders Plaza",            mx:552,my:174},
+  {id:12,n:"Miracle at the Meadows",    mx:543,my:350},
+  {id:0, n:"戶外／巡演／位置未標示"},
+];
+const LOC=Object.fromEntries(LOCS.map(l=>[l.id,l]));
+const PFX={EP:1,C:2,R:3,W:4,RC:5,H:6,UP:7,FP:10};
+function locOf(c){
+  if(c==="GH")return 7; if(c==="VS")return 9; if(!c||c==="FT"||c==="OUT")return 0;
+  let m=c.match(/^L(\d+)$/); if(m)return +m[1];
+  m=c.match(/^(EP|RC|FP|UP|R|H|C|W)/); return m?PFX[m[1]]:0;
+}
+/* 格式：名稱@攤位編號#限定週末。L# ＝傳單標示的地點；GH/VS＝Garden Haus/Village Shop；FT＝餐車；OUT＝戶外/未標示 */
+const FOOD_RAW=`A&B Kettle Corn@GH
+Alberta Whisky Cake@RC25
+Al's Chimney Cakes@L11
+Ambrosial Cheesecake@R08
+Annex Ale Project@R43
+Apollonia Honey Wines@FP11
+Arepa Boss@L3
+Ariya Burmese Foods@RC08
+Artilate Chocolate@EP55
+Avatara Pizza@FT
+Bamboo Dumplings@EP47
+Big Sausage Roll Pie Co@R63
+Brandi's Salsa@RC04
+Brassica Mustard@RC10
+Bridgeland Distillery@R57
+British Banger Company@FP3
+Burwood Distillery@RC17
+Café Croissant@L2
+Calgary Heritage Roasting@R31
+Candytime@GH
+Caribbean Taste@C15
+Caroline Meats@H35
+Chin Music@EP22
+Chi's Tea Company@RC24
+Chunk'd Cookies@R23
+City & Country Urban Winery@EP56
+Cookie Castle@C20#3-4
+Cowboy's Caviar@R44
+Crave@R80
+Crickle Creek Coffee@FP02
+Crown Cookies@C24#2
+Culture Shocked@EP44
+Daddy C's Jerk Sauce@FP09
+Da Luigi Gourmet@EP65
+Davenport's Tasty Sensations@H04
+Deadly Beverage Co@EP2
+Desperately Seeking Hot Sauce@R09
+Dietz Meats@FP08
+Dolce & Veloce@EP67
+DOPO Market@FP6
+Eagle Street Eats@FT
+Eau Claire Distillery@H33
+Eclipse Bakery@VS
+Edible Acres@R64
+Fantasy Pretzels@OUT
+Field Stone Fruit Wines@R12
+Fox Hills Cidery@RC12
+French 50 Bakery@RC3
+Ghostly Garlic@EP53
+Going Nuts@GH
+GOODBAKE@H16
+Grandma's Traditional Fruitcakes@H01
+Hayloft Cafe@FT
+Heinz Mobile Food Experience@FT#2
+HelloAmino@R72
+High River Brewing@RC20
+Highwood Apple Co@C03
+il Forno Vagabondo@FT#2-4
+Jordan Ridge Sauces@EP12
+Kings Garden Family Orchard@RC28
+Knox Your Socks Off@R64
+Kolo Bakery@C20#1-2
+Lemay's Kettle Korn@FT
+Localite@FP12
+Longview Jerky Shop@OUT
+Lost Things Distillery@OUT
+Luc's European Meats@OUT
+Ma Pies@H27
+Masa Mama Taqueria（樓上）@L1
+Master Chocolat@RC20
+Meela's Mixes@EP33
+Middleton's Bitters@R55
+Mighty Pines Cocktail Co.@EP5
+Modern Whisk@R53
+Moji Bakery@H15
+M. Schneider & Son@RC14
+Nookies Bakeshop@EP10
+Old Prospector Distilling@FP06
+Olive you more@FP7
+Out of Chaos Comes Cookies@EP51
+Perogy Boyz@FT
+Prairie Crunch Co.@R03
+River Rock Fudge@H19
+Round Box Foods@R62
+S2N Freeze Drying@EP26
+Sabores Mexican Cuisine@EP68
+Saltcraft Meat Co.@EP11
+Sève de Mars@H05
+Seven Spice@C09#2-4
+Simple Simon Pies@R70
+Sleigh Bar@L1
+Spirit Hills Flower Winery@EP69
+Strawberry Treats@R21
+Sugar Rush@EP23
+Sunterra Quality Food Markets@L1
+The Sausage King@L3`;
+const SHOP_RAW=`Spenvann@RC27
+Delores Montpetit Fine Art@R76
+Don Kesler Nature Photography@EP48
+Dunrovin Ranch Designs@R04
+Elemental Artistry@R41
+Haley Potter@EP43
+Heather Kinahan Art@R81
+Holt Fine Art@OUT
+Janny's Jools@R15
+Kim Penner Equine Art@OUT
+Leslie Starr Fine Art@R78
+Little House Co.@W04#3-4
+Little Monkey Metal Works@UP1
+Maggie Warkentin Fine Art@H34
+Outset Arts@R48
+Philpotts Paintings@RC01
+Renee Gould Art@EP25
+Ron Church Fine Art@EP21
+SK Florist@EP45
+The Vintage Gardener@C21#2
+Wahl Art@EP50
+Wild Forest@R05
+Catrina Art@R59
+Adesso Man@EP59
+Alberta Beef Underwear@EP54
+Alberta Fine Leathers@OUT
+Brindy Luxury Silk@R38
+Burbaby@R56
+Canadian Beeseal@EP57
+Caribou Kids Clothing@EP34
+CaroQuilla Bamboo@FP03
+Cool Shirts 69@C05
+Devon + Lang@H38
+Executive Jewels@EP30
+Flying Circus@C07
+For Kingdom and Sparrow@H13
+Friday Sock Co.@EP70
+Go Coco! Clothing@C09#1
+Good Luck Sock@EP8
+Gray Haus@H32
+Inkary Canada@UP2
+Island Knits@C24#3-4
+Jerk It Fishing Co.@C02
+Kindred Coast@RC26
+KNKT Belts@EP66
+Little BOW-Tique Okotoks@H07
+Lovemegurumi@C14#3-4
+Mads Mueller Design Co.@C06
+Mariah Argillaton@R54
+Medium Rare Supply Co@EP9
+Meraki Movement@EP19
+Mongolian Gallery@OUT
+Motley Socks@R42
+Onyx+Ivy@H32
+Pacific & Moss Co.@R34
+Prairie Spirit Alpacas@H10
+SHOP. at Spruce Meadows@OUT
+Sinners2Saints@R82
+Small Bits of Happiness@EP1
+Sock Rocket@R60
+Stunning Creations@R74
+Thelma & Thistle@EP31
+Ulla & Viggo@C23#4
+Way She Goes Clothes@C16
+Wild Antler Thread Co@RC11
+Winterborn Alpaca@GH
+Wolf & Fox Designs@C18
+Woodworn@EP62`;
+function parse(raw,cat){
+  return raw.split("\n").map(l=>{
+    const[n,rest=""]=l.split("@"); const[code,wk]=rest.split("#");
+    let w=null; if(wk){const p=wk.split("-").map(Number); w=[p[0],p[1]||p[0]]}
+    return {id:cat+":"+n,n,cat,code,loc:locOf(code),w};
+  }).filter(v=>!v.w||(WK>=v.w[0]&&WK<=v.w[1]));
+}
+const VENDORS=[...parse(FOOD_RAW,"food"),...parse(SHOP_RAW,"shop")];
+const nFood=VENDORS.filter(v=>v.cat==="food").length, nShop=VENDORS.filter(v=>v.cat==="shop").length;
+
+/* 官網已公布的活動。days：官網確定的星期；未標＝官網沒寫是哪幾天 */
+const ACTS=[
+  {id:"a:reindeer",n:"馴鹿 Reindeer visits",loc:5,s:11,e:16,days:[0],at:"Riding Hall Circle"},
+  {id:"a:zoo",n:"Petting Zoo",loc:0,s:10+5/60,e:18},
+  {id:"a:ice",n:"冰雕 · Julian Lee",loc:0,s:12,e:17,at:"Deloitte Ring"},
+  {id:"a:hh",n:"Hybrid Harmony 四重唱",loc:0,s:12,e:15,at:"園區巡演"},
+  {id:"a:cys",n:"Calgary Youth Singers",loc:0,s:15,e:17,at:"園區巡演"},
+  {id:"a:santa",n:"Santa's Cozy Corner · 與 Santa 拍照（每張捐 $10）",loc:7},
+  {id:"a:bar",n:"Miracle at the Meadows 節慶調酒吧",loc:12},
+].filter(a=>!a.days||a.days.includes(TARGET.dow));
+
+/* ================= STATE ================= */
+const FKEY="spruce-favs-2026";
+let favs=new Set(); try{favs=new Set(JSON.parse(localStorage.getItem(FKEY)||"[]"))}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem(FKEY,JSON.stringify([...favs]))}catch(e){}};
+let mode="all", favOnly=false, activeLoc=null, query="";
+const openD=new Set();
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+/* ================= HEADER ================= */
+function status(){
+  if(!IS_TODAY) return ["closed",SEASON_OVER?"本季已結束":"今天不營業"];
+  const t=nowH(); const end=H.eve||H.c;
+  if(t<H.o) return ["soon","尚未開門"];
+  if(t>=end) return ["closed","已打烊"];
+  if(H.eve&&t>=H.c) return ["","18+ 夜場"];
+  return ["","營業中"];
+}
+function renderHead(){
+  const[k,t]=status();
+  const d=TARGET.date;
+  const label=IS_TODAY?"今天":(SEASON_OVER?"本季最後一天":"下一個營業日");
+  document.getElementById("hdsub").innerHTML=
+    `<span class="badge ${k}">${t}</span><span>${label} · ${DOW[TARGET.dow]} ${d.getMonth()+1}/${d.getDate()} · ${hoursTxt}</span>`;
+}
+function tickClock(){
+  const d=new Date();
+  document.getElementById("clock").textContent=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  renderHead();
+}
+
+/* ================= FILTERING ================= */
+function vMatch(v){
+  if(favOnly&&!favs.has(v.id))return false;
+  const q=query.trim().toLowerCase();
+  return !q||(v.n+" "+(v.code||"")).toLowerCase().includes(q);
+}
+function aMatch(a){
+  if(favOnly&&!favs.has(a.id))return false;
+  const q=query.trim().toLowerCase();
+  return !q||(a.n+" "+(a.at||"")).toLowerCase().includes(q);
+}
+function actStatus(a){
+  if(a.s==null||!IS_TODAY)return null;
+  const t=nowH(); return t>=a.e?"done":t>=a.s?"live":"soon";
+}
+const range=a=>a.s==null?"":`${hm(a.s)}–${hm(a.e)}`;
+
+/* ================= LIST ================= */
+function heart(id){return `<button class="heart ${favs.has(id)?"on":""}" data-fav="${esc(id)}" aria-label="想去">${favs.has(id)?"♥":"♡"}</button>`}
+function blk(l,cat,items){
+  if(!items.length)return"";
+  const key=l.id+cat, q=query.trim()||mode===cat||favOnly;
+  const op=q||openD.has(key);
+  const ico=cat==="food"?"🍴":"🛍", nm=cat==="food"?"美食":"購物";
+  return `<details class="blk ${cat}" data-k="${key}" ${op?"open":""}>
+    <summary><span>${ico} ${nm} · ${items.length}</span><span class="tw">▼</span></summary>
+    <div class="vl">${items.map(v=>`<div class="v"><span>${esc(v.n)}${v.code&&/\d/.test(v.code)?`<small>${esc(v.code)}</small>`:""}${v.w?`<small class="wk">僅 W${v.w[0]===v.w[1]?v.w[0]:v.w[0]+"–"+v.w[1]}</small>`:""}</span>${heart(v.id)}</div>`).join("")}</div>
+  </details>`;
+}
+function actRow(a){
+  const st=actStatus(a);
+  const tg=st==="live"?`<span class="tag live">進行中</span>`:st==="soon"?`<span class="tag soon">即將</span>`:st==="done"?`<span class="tag">已結束</span>`:"";
+  const q=(a.s!=null&&!a.days)?`<span class="tag q">日期未確認</span>`:"";
+  return `<div class="act"><div>${esc(a.n)}<small>${[range(a),a.at].filter(Boolean).join(" · ")}</small></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end">${tg}${q}${heart(a.id)}</div></div>`;
+}
+function render(){
+  const main=document.getElementById("main");
+  let h="", shown=0;
+  for(const l of LOCS){
+    if(activeLoc!==null&&l.id!==activeLoc)continue;
+    const q=query.trim().toLowerCase();
+    const locHit=q&&l.n.toLowerCase().includes(q);
+    const food=mode==="shop"||mode==="act"?[]:VENDORS.filter(v=>v.loc===l.id&&v.cat==="food"&&(locHit||vMatch(v)));
+    const shop=mode==="food"||mode==="act"?[]:VENDORS.filter(v=>v.loc===l.id&&v.cat==="shop"&&(locHit||vMatch(v)));
+    const acts=mode==="food"||mode==="shop"?[]:ACTS.filter(a=>a.loc===l.id&&(locHit||aMatch(a)));
+    const fF=favOnly?food.filter(v=>favs.has(v.id)):food, sF=favOnly?shop.filter(v=>favs.has(v.id)):shop, aF=favOnly?acts.filter(a=>favs.has(a.id)):acts;
+    if(!fF.length&&!sF.length&&!aF.length)continue;
+    shown++;
+    h+=`<div class="loc ${activeLoc===l.id?"sel":""}" id="loc${l.id}">
+      <div class="loc-h"><div class="num ${l.id?"":"o"}">${l.id||"·"}</div>
+        <div><div class="loc-n">${esc(l.n)}</div>${l.tag?`<div class="loc-s">${esc(l.tag)}</div>`:""}</div></div>
+      ${aF.map(actRow).join("")}${blk(l,"food",fF)}${blk(l,"shop",sF)}</div>`;
+  }
+  main.innerHTML=(shown?`<div class="sec-label">${activeLoc!==null?"已選地點":favOnly?"想去清單":mode==="food"?"美食 · 依地點":mode==="shop"?"購物 · 依地點":mode==="act"?"今日活動":"全部地點"}</div>`+h
+    :`<div class="empty">${favOnly?"還沒有想去的項目，點 ♡ 加入":"找不到符合的項目"}</div>`);
+  main.querySelectorAll("details.blk").forEach(d=>d.addEventListener("toggle",()=>{d.open?openD.add(d.dataset.k):openD.delete(d.dataset.k)}));
+  main.querySelectorAll(".heart").forEach(b=>b.addEventListener("click",e=>{e.preventDefault();toggleFav(b.dataset.fav)}));
+}
+function toggleFav(id){
+  favs.has(id)?favs.delete(id):favs.add(id);saveFavs();
+  const keep=window.scrollY; render(); renderChips(); window.scrollTo(0,keep);
+}
+
+/* ================= CHIPS ================= */
+function renderChips(){
+  const el=document.getElementById("chips");
+  const nAct=ACTS.length;
+  const items=[
+    ["fav",`♥ 想去${favs.size?` <b>${favs.size}</b>`:""}`,favOnly,""],
+    ["all","全部",mode==="all"&&!favOnly,""],
+    ["food",`🍴 美食 <b>${nFood}</b>`,mode==="food"&&!favOnly,"food"],
+    ["shop",`🛍 購物 <b>${nShop}</b>`,mode==="shop"&&!favOnly,"shop"],
+    ["act",`🎄 活動 <b>${nAct}</b>`,mode==="act"&&!favOnly,""],
+  ];
+  el.innerHTML=items.map(([k,t,on,c])=>`<button class="chip ${c} ${on?"on":""}" data-m="${k}">${t}</button>`).join("");
+  el.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.m==="fav")favOnly=!favOnly; else{mode=b.dataset.m;favOnly=false}
+    renderChips();render();renderMap();
+  }));
+}
+
+/* ================= NEXT UP ================= */
+function renderNext(){
+  const box=document.getElementById("nextup");
+  if(!IS_TODAY){box.classList.remove("show");return}
+  const t=nowH();
+  const c=ACTS.filter(a=>a.s!=null&&a.e>t).sort((a,b)=>a.s-b.s)[0];
+  if(!c){box.classList.remove("show");return}
+  const live=t>=c.s, diff=Math.round((c.s-t)*60);
+  const cnt=live?"LIVE":diff<60?`${diff} 分後`:`${Math.floor(diff/60)}h${String(diff%60).padStart(2,"0")}`;
+  box.innerHTML=`<div class="nu"><div><div class="nu-tag">接下來${c.days?"":" · 日期官網未標示"}</div>
+    <div class="nu-name">${esc(c.n)}</div><div class="nu-meta">${range(c)} · ${esc(c.at||LOC[c.loc].n)}</div></div><div class="nu-r">${cnt}</div></div>`;
+  box.classList.add("show");
+}
+
+/* ================= MAP ================= */
+const MAP={W:520,H:460}, OX=180, OY=10;
+function counts(id){
+  const f=VENDORS.filter(v=>v.loc===id&&v.cat==="food").length, s=VENDORS.filter(v=>v.loc===id&&v.cat==="shop").length;
+  return {f,s};
+}
+function renderMap(){
+  const svg=document.getElementById("mapsvg");
+  const tree=[[40,60],[60,300],[150,420],[200,240],[240,12],[250,300],[430,40],[470,200],[490,420],[300,440],[110,380]];
+  let h=`<rect x="-200" y="-200" width="1000" height="1000" fill="#EFE5D0"/>
+  <rect x="295" y="2" width="145" height="400" rx="10" fill="#F2D3D3" opacity=".7"/>
+  <line x1="250" y1="-20" x2="250" y2="480" stroke="#E2D6BF" stroke-width="6"/>
+  <line x1="-20" y1="412" x2="560" y2="412" stroke="#E2D6BF" stroke-width="6"/>
+  <rect x="78" y="-6" width="165" height="66" rx="4" fill="#D9806A" opacity=".5"/>
+  <rect x="104" y="56" width="62" height="70" rx="4" fill="#D9806A" opacity=".5"/>
+  <rect x="-6" y="112" width="124" height="138" rx="4" fill="#D9806A" opacity=".5"/>
+  ${tree.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="#B9C98A" opacity=".7"/>`).join("")}
+  <text class="fac" x="85" y="272">EQUI-PLEX</text>
+  <text class="fac" x="165" y="22">TELUS RIDING HALL</text>
+  <text class="fac" x="85" y="404">WEST TICKET ENTRANCE</text>
+  <text class="fac" x="330" y="232">MAIN RESTROOMS</text>
+  <text class="fac" x="445" y="108">EAST TICKET</text>
+  <text class="fac" x="123" y="448">VIP</text>`;
+  const sel=activeLoc;
+  for(const l of LOCS){
+    if(!l.id)continue;
+    const c=counts(l.id), n=mode==="food"?c.f:mode==="shop"?c.s:null;
+    const cls=mode==="food"?"food":mode==="shop"?"shop":"";
+    const dim=(sel!==null&&sel!==l.id)||(n===0)||(mode==="act"&&!ACTS.some(a=>a.loc===l.id));
+    const x=l.mx-OX,y=l.my-OY;
+    h+=`<g class="zone ${cls} ${sel===l.id?"sel":""} ${dim?"dim":""}" data-l="${l.id}">
+      <circle class="pc" cx="${x}" cy="${y}" r="20"/>
+      <text class="pn" x="${x}" y="${y}">${n===null?l.id:n}</text>
+      ${n!==null?`<text class="pn" style="font-size:10px;fill:var(--ink);stroke:#EFE5D0;stroke-width:3;paint-order:stroke" x="${x}" y="${y+31}">${l.id}</text>`:""}
+      <text class="pl" x="${x}" y="${y-25}">${esc(l.n)}</text></g>`;
+  }
+  h+=`<g id="gpspin" style="display:none"><circle class="pin-ring" r="16" fill="none" stroke="#1A1A1A" stroke-width="2"/><circle r="7" fill="#2B6CB0" stroke="#fff" stroke-width="3"/></g>`;
+  svg.innerHTML=`<g id="world">${h}</g>`;
+  svg.querySelectorAll(".zone").forEach(g=>g.addEventListener("click",()=>{
+    if(calMode)return;
+    if(svg._dragged){svg._dragged=false;return}
+    const id=+g.dataset.l; activeLoc=activeLoc===id?null:id;
+    render();renderMap();updateNote();
+    if(activeLoc!==null){const el=document.getElementById("loc"+id);if(el)el.scrollIntoView({block:"start"})}
+  }));
+  initMapZoom();
+  placePin();
+}
+function updateNote(){
+  const n=document.getElementById("mapNote");
+  n.textContent=activeLoc!==null
+    ?`已選：${activeLoc} ${LOC[activeLoc].n}（再點一次取消）。示意位置，非精準比例，北方朝上。`
+    :`依現場 Market Guide 手繪的示意位置，非精準比例，北方朝上。按「定位」時瀏覽器會詢問位置權限，位置只在你的裝置上計算，不會上傳。${mode==="food"?"圓圈數字＝該地點今日美食攤位數。":mode==="shop"?"圓圈數字＝該地點今日購物攤位數。":""}`;
+  if(gpsMsg)n.textContent+=" "+gpsMsg;
+}
+function initMapZoom(){
+  const svg=document.getElementById("mapsvg"); let world=document.getElementById("world");
+  let s=svg._s||1,tx=svg._tx||0,ty=svg._ty||0;
+  const apply=()=>{
+    s=Math.min(4,Math.max(1,s));
+    tx=Math.min(0,Math.max(MAP.W*(1-s),tx)); ty=Math.min(0,Math.max(MAP.H*(1-s),ty));
+    svg._s=s;svg._tx=tx;svg._ty=ty;
+    world.setAttribute("transform",`translate(${tx.toFixed(1)} ${ty.toFixed(1)}) scale(${s.toFixed(3)})`);
+    svg.classList.toggle("zoomed",s>=1.5);
+  };
+  apply();
+  if(svg._zoomInit)return;
+  svg._zoomInit=true; svg._dragged=false;
+  const toSvg=(cx,cy)=>{const r=svg.getBoundingClientRect();return[(cx-r.left)*MAP.W/r.width,(cy-r.top)*MAP.H/r.height]};
+  const pts=new Map(); let last=null,moved=0;
+  svg.addEventListener("pointerdown",e=>{pts.set(e.pointerId,[e.clientX,e.clientY]);last=null;moved=0});
+  svg.addEventListener("pointermove",e=>{
+    if(!pts.has(e.pointerId))return; pts.set(e.pointerId,[e.clientX,e.clientY]);
+    world=document.getElementById("world"); s=svg._s;tx=svg._tx;ty=svg._ty;
+    const arr=[...pts.values()];
+    if(arr.length===1){
+      if(last&&!last.d){const[px,py]=toSvg(last[0],last[1]),[qx,qy]=toSvg(arr[0][0],arr[0][1]);tx+=qx-px;ty+=qy-py;moved+=Math.hypot(qx-px,qy-py);apply();if(moved>5){try{svg.setPointerCapture(e.pointerId)}catch(_){}}}
+      last=arr[0].slice();
+    }else if(arr.length===2){
+      const d=Math.hypot(arr[0][0]-arr[1][0],arr[0][1]-arr[1][1]),mid=[(arr[0][0]+arr[1][0])/2,(arr[0][1]+arr[1][1])/2];
+      if(last&&last.d){const[mx,my]=toSvg(mid[0],mid[1]);const px=(mx-tx)/s,py=(my-ty)/s;s*=d/last.d;s=Math.min(4,Math.max(1,s));tx=mx-px*s;ty=my-py*s;moved=99;apply()}
+      last={d,mid};
+    }
+  });
+  const up=e=>{pts.delete(e.pointerId);last=null;if(moved>5)svg._dragged=true};
+  svg.addEventListener("pointerup",up);svg.addEventListener("pointercancel",up);
+  svg.addEventListener("wheel",e=>{e.preventDefault();world=document.getElementById("world");s=svg._s;tx=svg._tx;ty=svg._ty;
+    const[mx,my]=toSvg(e.clientX,e.clientY);const px=(mx-tx)/s,py=(my-ty)/s;s*=e.deltaY<0?1.15:.87;s=Math.min(4,Math.max(1,s));tx=mx-px*s;ty=my-py*s;apply()},{passive:false});
+  svg.addEventListener("click",e=>{
+    if(!calMode)return;
+    if(svg._dragged){svg._dragged=false;return}
+    const z=e.target.closest(".zone");
+    let x,y;
+    if(z){const l=LOC[+z.dataset.l];x=l.mx-OX;y=l.my-OY}
+    else{const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)*MAP.W/r.width,py=(e.clientY-r.top)*MAP.H/r.height;x=(px-svg._tx)/svg._s;y=(py-svg._ty)/svg._s}
+    setCalib(x,y);
+  });
+  svg.addEventListener("dblclick",()=>{world=document.getElementById("world");svg._s=1;svg._tx=0;svg._ty=0;s=1;tx=0;ty=0;apply()});
+}
+
+/* ================= GPS 定位 =================
+ * 沒有各館的真實經緯度，所以不假裝精準：
+ * 1) 未校正：把園區邊界（OSM）線性對應到地圖，只能當粗估。
+ * 2) 校正後：你點地圖上自己站的位置當錨點，之後圓點依 GPS 位移移動（比例 SCALE 為假設值）。 */
+const GB={latMax:50.8915,latMin:50.8831,lngMin:-114.1161,lngMax:-114.1053};
+const SCALE=1.0; /* 公尺／地圖單位，假設值 */
+let watchId=null,userPos=null,calib=null,manual=null,calMode=false,gpsMsg="";
+const rad=d=>d*Math.PI/180;
+function mapPos(p){
+  if(calib){
+    const dx=(p.lng-calib.lng)*Math.cos(rad(p.lat))*111320, dy=(p.lat-calib.lat)*110540;
+    return [calib.x+dx/SCALE, calib.y-dy/SCALE];
+  }
+  if(!(p.lat>GB.latMin&&p.lat<GB.latMax&&p.lng>GB.lngMin&&p.lng<GB.lngMax))return null;
+  return [(p.lng-GB.lngMin)/(GB.lngMax-GB.lngMin)*MAP.W,(GB.latMax-p.lat)/(GB.latMax-GB.latMin)*MAP.H];
+}
+function placePin(){
+  const pin=document.getElementById("gpspin"); if(!pin)return;
+  const m=(userPos&&mapPos(userPos))||manual;
+  if(!m){pin.style.display="none";renderNearby(null);return}
+  const x=Math.min(MAP.W+40,Math.max(-40,m[0])), y=Math.min(MAP.H+40,Math.max(-40,m[1]));
+  pin.style.display="";pin.setAttribute("transform",`translate(${x.toFixed(1)},${y.toFixed(1)})`);
+  renderNearby(m);
+}
+function renderNearby(m){
+  const box=document.getElementById("nearby");
+  if(!m){box.innerHTML=`<div class="ph">按「定位」或「我在這裡」後，這裡會列出離你最近的地點，以及附近的美食與購物。</div>`;return}
+  const dist=l=>Math.hypot(l.mx-OX-m[0],l.my-OY-m[1])*SCALE;
+  const fmtD=d=>"約 "+(d<950?Math.round(d/10)*10+" m":(d/1000).toFixed(1)+" km");
+  const list=LOCS.filter(l=>l.id).map(l=>({l,d:dist(l),c:counts(l.id)})).sort((a,b)=>a.d-b.d);
+  const D=Object.fromEntries(list.map(x=>[x.l.id,x.d]));
+  const near=cat=>VENDORS.filter(v=>v.cat===cat&&v.loc>0).sort((a,b)=>D[a.loc]-D[b.loc]||a.n.localeCompare(b.n)).slice(0,6);
+  const rows=(arr)=>arr.map(v=>`<div class="nb"><div>${esc(v.n)}<span style="margin-left:8px">${v.loc} ${esc(LOC[v.loc].n)}</span></div><span>${fmtD(D[v.loc])}</span></div>`).join("");
+  box.innerHTML=
+    `<div class="sec-label" style="margin:10px 0 2px">離你最近</div>`+
+    list.slice(0,3).map(({l,d,c})=>`<div class="nb"><div>${l.id} ${esc(l.n)}<span style="margin-left:8px">🍴${c.f} 🛍${c.s}</span></div><span>${fmtD(d)}</span></div>`).join("")+
+    `<div class="sec-label" style="margin:14px 0 2px;color:var(--food)">🍴 附近美食</div>`+rows(near("food"))+
+    `<div class="sec-label" style="margin:14px 0 2px;color:var(--shop)">🛍 附近購物</div>`+rows(near("shop"))+
+    `<div style="font-size:10.5px;color:var(--sub);padding:8px 0 6px;line-height:1.6">攤位只知道所在地點，距離是到該地點的估計值，同一地點內的攤位無法再細分；餐車與戶外攤位沒有位置，不列入推薦。</div>`;
+  box.scrollTop=0;
+}
+function onPos(p){
+  userPos={lat:p.coords.latitude,lng:p.coords.longitude};
+  const m=mapPos(userPos);
+  gpsMsg=calib?"位置依你的校正點與 GPS 位移推算，距離為估計值。"
+    :m?"目前為粗估位置，可能差數十到上百公尺；到定點後按「我在這裡」再點地圖上你站的地方，位置會準很多。"
+    :"你目前在園區範圍外。若人在園區內但沒出現圓點，按「我在這裡」手動指定。";
+  updateNote();placePin();
+}
+function onPosErr(err){
+  if(err.code===1||!("geolocation" in navigator)){
+    gpsMsg="定位失敗：權限被拒（code "+err.code+"）。請到瀏覽器／手機的網站設定把位置改為允許，並確認不是在 LINE、IG 等內建瀏覽器開啟，再按一次定位。也可以按「我在這裡」手動指定位置。";
+    stopWatch(true);
+  }else{
+    gpsMsg=(err.code===2?"定位失敗：裝置抓不到位置（code 2），請確認手機的定位服務已開啟。":"定位逾時（code "+err.code+"）。")+"仍持續重試；也可以按「我在這裡」手動指定位置。";
+  }
+  updateNote();
+}
+function startWatch(){
+  if(!("geolocation" in navigator)){onPosErr({code:0});return}
+  const b=document.getElementById("locBtn");b.classList.add("on");b.textContent="定位中";
+  watchId=navigator.geolocation.watchPosition(onPos,onPosErr,{enableHighAccuracy:true,maximumAge:30000,timeout:30000});
+}
+function stopWatch(keepMsg){
+  if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
+  userPos=null;calib=null;calMode=false;if(!keepMsg)gpsMsg="";
+  const b=document.getElementById("locBtn");b.classList.remove("on");b.textContent="定位";
+  const c=document.getElementById("calBtn");c.classList.remove("on");c.textContent="我在這裡";
+  placePin();
+}
+function setCalib(x,y){
+  calMode=false;
+  const c=document.getElementById("calBtn");c.classList.remove("on");c.textContent="我在這裡";
+  if(userPos){
+    calib={lat:userPos.lat,lng:userPos.lng,x,y};
+    gpsMsg="已校正。位置依你的校正點與 GPS 位移推算，距離為估計值。";
+  }else{
+    manual=[x,y];
+    gpsMsg="已手動指定位置（不會隨你移動，走動後請再點一次）。距離為估計值。";
+  }
+  updateNote();placePin();
+}
+document.getElementById("locBtn").addEventListener("click",()=>{watchId===null?startWatch():stopWatch()});
+document.getElementById("calBtn").addEventListener("click",()=>{
+  calMode=!calMode;const c=document.getElementById("calBtn");
+  c.classList.toggle("on",calMode);c.textContent=calMode?"點地圖上你的位置":"我在這裡";
+  if(calMode){gpsMsg="請點地圖上你現在站的位置（點某個編號＝你在那個地點）。";updateNote()}
+});
+
+/* ================= SEARCH ================= */
+const qEl=document.getElementById("q"), sb=document.getElementById("sb");
+qEl.addEventListener("input",()=>{query=qEl.value;sb.classList.toggle("has-q",!!query);render()});
+document.getElementById("clr").addEventListener("click",()=>{qEl.value="";query="";sb.classList.remove("has-q");render()});
+
+/* ================= INIT ================= */
+renderChips();renderMap();updateNote();render();renderNext();tickClock();renderNearby(null);
+setInterval(()=>{tickClock();renderNext()},30000);
+</script>
+</body>
+</html>
