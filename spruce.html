@@ -78,7 +78,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(246,239,224,.95);backdro
 .fac{font-family:"Space Grotesk",sans-serif;font-size:11px;fill:var(--sub);text-anchor:middle;letter-spacing:.06em}
 .locate{font-size:11.5px;letter-spacing:.06em;padding:6px 14px;border-radius:999px;border:1px solid var(--ink);color:var(--ink);transition:all .2s ease}
 .locate.on{background:var(--ink);color:#F6EFE0}
-.locate.cal{border-color:var(--gold);color:var(--gold);display:none}
+.locate.cal{border-color:var(--gold);color:var(--gold)}
 .locate.cal.on{background:var(--gold);color:#2B1A1D;border-color:var(--gold)}
 .pin-ring{animation:ring 2.4s ease-out infinite;transform-origin:center;transform-box:fill-box}
 @keyframes ring{0%{opacity:.5;transform:scale(.4)}100%{opacity:0;transform:scale(1.8)}}
@@ -153,7 +153,7 @@ footer{max-width:720px;margin:0 auto;padding:22px 20px 0;font-size:10.5px;color:
 <section class="mapsec">
   <div class="map-head">
     <div class="map-title">Market Map · 點編號篩選 · 雙指縮放</div>
-    <div style="display:flex;gap:8px"><button class="locate cal" id="calBtn">校正位置</button><button class="locate" id="locBtn">定位</button></div>
+    <div style="display:flex;gap:8px"><button class="locate cal" id="calBtn">我在這裡</button><button class="locate" id="locBtn">定位</button></div>
   </div>
   <div class="mapbox"><svg id="mapsvg" viewBox="0 0 520 460" role="img" aria-label="園區示意地圖"></svg></div>
   <div class="map-note" id="mapNote"></div>
@@ -636,7 +636,7 @@ function initMapZoom(){
  * 2) 校正後：你點地圖上自己站的位置當錨點，之後圓點依 GPS 位移移動（比例 SCALE 為假設值）。 */
 const GB={latMax:50.8915,latMin:50.8831,lngMin:-114.1161,lngMax:-114.1053};
 const SCALE=1.0; /* 公尺／地圖單位，假設值 */
-let watchId=null,userPos=null,calib=null,calMode=false,gpsMsg="";
+let watchId=null,userPos=null,calib=null,manual=null,calMode=false,gpsMsg="";
 const rad=d=>d*Math.PI/180;
 function mapPos(p){
   if(calib){
@@ -648,7 +648,7 @@ function mapPos(p){
 }
 function placePin(){
   const pin=document.getElementById("gpspin"); if(!pin)return;
-  const m=userPos&&mapPos(userPos);
+  const m=(userPos&&mapPos(userPos))||manual;
   if(!m){pin.style.display="none";renderNearby(null);return}
   const x=Math.min(MAP.W+40,Math.max(-40,m[0])), y=Math.min(MAP.H+40,Math.max(-40,m[1]));
   pin.style.display="";pin.setAttribute("transform",`translate(${x.toFixed(1)},${y.toFixed(1)})`);
@@ -674,44 +674,48 @@ function renderNearby(m){
 function onPos(p){
   userPos={lat:p.coords.latitude,lng:p.coords.longitude};
   const m=mapPos(userPos);
-  document.getElementById("calBtn").style.display="inline-block";
   gpsMsg=calib?"位置依你的校正點與 GPS 位移推算，距離為估計值。"
-    :m?"目前為粗估位置，可能差數十到上百公尺；到定點後按「校正位置」再點地圖上你站的地方。"
-    :"你目前在園區範圍外。若人在園區內但沒出現圓點，按「校正位置」手動指定。";
+    :m?"目前為粗估位置，可能差數十到上百公尺；到定點後按「我在這裡」再點地圖上你站的地方，位置會準很多。"
+    :"你目前在園區範圍外。若人在園區內但沒出現圓點，按「我在這裡」手動指定。";
   updateNote();placePin();
 }
 function onPosErr(err){
   if(err.code===1||!("geolocation" in navigator)){
-    gpsMsg="無法取得定位（"+(err.code===1?"權限被拒，請到瀏覽器的網站設定把位置改為允許後，再按一次定位":"此裝置不支援")+"）。仍可點編號瀏覽各地點。";
+    gpsMsg="定位失敗：權限被拒（code "+err.code+"）。請到瀏覽器／手機的網站設定把位置改為允許，並確認不是在 LINE、IG 等內建瀏覽器開啟，再按一次定位。也可以按「我在這裡」手動指定位置。";
     stopWatch(true);
   }else{
-    gpsMsg="定位訊號暫時不佳，保留最後位置並持續重試⋯";
+    gpsMsg=(err.code===2?"定位失敗：裝置抓不到位置（code 2），請確認手機的定位服務已開啟。":"定位逾時（code "+err.code+"）。")+"仍持續重試；也可以按「我在這裡」手動指定位置。";
   }
   updateNote();
 }
 function startWatch(){
   if(!("geolocation" in navigator)){onPosErr({code:0});return}
   const b=document.getElementById("locBtn");b.classList.add("on");b.textContent="定位中";
-  watchId=navigator.geolocation.watchPosition(onPos,onPosErr,{enableHighAccuracy:true,maximumAge:15000,timeout:12000});
+  watchId=navigator.geolocation.watchPosition(onPos,onPosErr,{enableHighAccuracy:true,maximumAge:30000,timeout:30000});
 }
 function stopWatch(keepMsg){
   if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
   userPos=null;calib=null;calMode=false;if(!keepMsg)gpsMsg="";
   const b=document.getElementById("locBtn");b.classList.remove("on");b.textContent="定位";
-  const c=document.getElementById("calBtn");c.classList.remove("on");c.style.display="none";c.textContent="校正位置";
+  const c=document.getElementById("calBtn");c.classList.remove("on");c.textContent="我在這裡";
   placePin();
 }
 function setCalib(x,y){
-  if(!userPos)return;
-  calib={lat:userPos.lat,lng:userPos.lng,x,y};calMode=false;
-  const c=document.getElementById("calBtn");c.classList.remove("on");c.textContent="重新校正";
-  gpsMsg="已校正。位置依你的校正點與 GPS 位移推算，距離為估計值。";
+  calMode=false;
+  const c=document.getElementById("calBtn");c.classList.remove("on");c.textContent="我在這裡";
+  if(userPos){
+    calib={lat:userPos.lat,lng:userPos.lng,x,y};
+    gpsMsg="已校正。位置依你的校正點與 GPS 位移推算，距離為估計值。";
+  }else{
+    manual=[x,y];
+    gpsMsg="已手動指定位置（不會隨你移動，走動後請再點一次）。距離為估計值。";
+  }
   updateNote();placePin();
 }
 document.getElementById("locBtn").addEventListener("click",()=>{watchId===null?startWatch():stopWatch()});
 document.getElementById("calBtn").addEventListener("click",()=>{
   calMode=!calMode;const c=document.getElementById("calBtn");
-  c.classList.toggle("on",calMode);c.textContent=calMode?"點地圖上你的位置":(calib?"重新校正":"校正位置");
+  c.classList.toggle("on",calMode);c.textContent=calMode?"點地圖上你的位置":"我在這裡";
   if(calMode){gpsMsg="請點地圖上你現在站的位置（點某個編號＝你在那個地點）。";updateNote()}
 });
 
